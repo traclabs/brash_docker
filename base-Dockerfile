@@ -1,0 +1,7 @@
+# Base image (with all dependencies) for cfe and related builds
+
+FROM ubuntu
+CMD bash
+ARG DEBIAN_FRONTEND=noninteractive   # Prevent prompts during apt installs
+RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config && rm -rf /var/lib/apt/lists/*
+

@@ -1,0 +1,9 @@
+FROM cfs-base
+
+ADD cFS /shared/cFS
+
+WORKDIR /shared/cFS
+RUN make &b& make install
+
+WORKDIR /shared/cFS/build/exe/cpu1
+CMD ./core-cpu1
