@@ -1,3 +1,6 @@
 [submodule "cFS"]
 	path = cFS
 	url = https://github.com/traclabs/cFS.git
+[submodule "brash"]
+	path = brash
+	url = https://bitbucket.org/traclabs/brash.git

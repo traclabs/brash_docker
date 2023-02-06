@@ -3,7 +3,11 @@ FROM cfs-base
 ADD cFS /shared/cFS
 
 WORKDIR /shared/cFS
-RUN make &b& make install
+RUN make SIMULATION=native O=/root/build-cfs INSTALLPREFIX=/root/exe-cfs prep
 
-WORKDIR /shared/cFS/build/exe/cpu1
+WORKDIR /root/build-cfs
+RUN make && make install && make mission-all && make mission-install
+
+#WORKDIR /shared/cFS/build/exe/cpu1
+WORKDIR /root/exe-cfs/cpu1
 CMD ./core-cpu1
