@@ -36,40 +36,32 @@ RUN sudo pip3 install vcstool
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash
 RUN rosdep update
 
-RUN mkdir -p /home/$USERNAME/ros
-WORKDIR /home/$USERNAME/ros
+# Copy the cloned repositories into container
+RUN sudo rm -r /var/cache/* /var/lib/apt/lists/*
+RUN mkdir -p /home/$USERNAME/ros/openmct-ros
+RUN mkdir -p /home/$USERNAME/cFS
+RUN mkdir -p /home/$USERNAME/ros/brash
+COPY --chown=$USERNAME:$USERNAME ros/openmct-ros /home/$USERNAME/ros/openmct-ros/.
+COPY --chown=$USERNAME:$USERNAME cFS /home/$USERNAME/cFS/.
+COPY --chown=$USERNAME:$USERNAME ros/brash /home/$USERNAME/ros/brash/.
 
-RUN --mount=type=ssh \
-  export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" && \
-  git clone git@bitbucket.org:traclabs/brash.git
+# install openmct plugin
+WORKDIR /home/$USERNAME/ros/openmct-ros
+RUN npm audit fix --force
+# RUN npm install --verbose
+# RUN npm run build:example
 
+# Build cFS 
+WORKDIR /home/$USERNAME/cFS
+RUN make SIMULATION=native prep
+RUN make
+RUN make install
 
-# # Copy the cloned repositories into container
-# RUN sudo rm -r /var/cache/* /var/lib/apt/lists/*
-# RUN mkdir -p /home/$USERNAME/ros/openmct-ros
-# RUN mkdir -p /home/$USERNAME/cFS
-# RUN mkdir -p /home/$USERNAME/ros/brash
-# COPY --chown=$USERNAME:$USERNAME ros/openmct-ros /home/$USERNAME/ros/openmct-ros/.
-# COPY --chown=$USERNAME:$USERNAME cFS /home/$USERNAME/cFS/.
-# COPY --chown=$USERNAME:$USERNAME ros/brash /home/$USERNAME/ros/brash/.
-
-# # install openmct plugin
-# WORKDIR /home/$USERNAME/ros/openmct-ros
-# RUN npm audit fix --force
-# # RUN npm install --verbose
-# # RUN npm run build:example
-
-# # Build cFS 
-# WORKDIR /home/$USERNAME/cFS
-# RUN make SIMULATION=native prep
-# RUN make
-# RUN make install
-
-# # Build ROS workspace
-# WORKDIR /home/$USERNAME/ros/brash
-# RUN sudo apt update
-# RUN sudo apt install -y ros-dev-tools ros-humble-joint-state-publisher-gui
-# RUN sudo rosdep install -i --from-path src --rosdistro ${ROS_DISTRO} -y
-# RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-#     && colcon build --symlink-install
+# Build ROS workspace
+WORKDIR /home/$USERNAME/ros/brash
+RUN sudo apt update
+RUN sudo apt install -y ros-dev-tools ros-humble-joint-state-publisher-gui
+RUN sudo rosdep install -i --from-path src --rosdistro ${ROS_DISTRO} -y
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+    && colcon build --symlink-install
 
