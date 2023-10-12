@@ -1,0 +1,23 @@
+{
+  "name": "humble desktop-full",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "runArgs": [
+    "--privileged",
+    "--network=host"
+  ],
+  "build": { "ssh": "default" },
+  "workspaceMount": "",
+  // "workspaceMount": "source=${localWorkspaceFolder},target=/${localWorkspaceFolderBasename},type=bind",
+  // "workspaceFolder": "/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/home/vscode/",
+    "mounts": [
+       "source=${localEnv:HOME}${localEnv:USERPROFILE}/.bash_history,target=/home/vscode/.bash_history,type=bind,consistency=cached",
+       "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh,readonly"
+    ]
+}
+
+
+      // "type=bind,source=${localWorkspaceFolder},target=/home/vscode",
+
+
