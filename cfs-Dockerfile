@@ -1,13 +1,13 @@
-FROM cfs-base
+FROM ubuntu
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config && rm -rf /var/lib/apt/lists/*
 
 ADD cFS /shared/cFS
 
 WORKDIR /shared/cFS
-RUN make SIMULATION=native O=/root/build-cfs INSTALLPREFIX=/root/exe-cfs prep
+RUN make prep SIMULATION=native && make && make install
 
-WORKDIR /root/build-cfs
-RUN make && make install && make mission-all && make mission-install
+WORKDIR /shared/cFS/build/exe/cpu2
 
-#WORKDIR /shared/cFS/build/exe/cpu1
-WORKDIR /root/exe-cfs/cpu1
-CMD ./core-cpu1
+CMD ./core-cpu2
