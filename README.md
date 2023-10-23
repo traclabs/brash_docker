@@ -13,7 +13,7 @@ This applies to hosts such as Apple M* processors, Pis, etc.
 
 An ARM-based image may be required for proper functionality (and improved performance). The official ROS Docker image does not include an ARM-based build.
 
-Edit the ros-base-Docerfile and change the image to `arm64v8/ros:galactic`
+Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
 
 # Setup
 These instruction are for a dev environment where source files are mounted to allow for easy incremental builds.
@@ -50,11 +50,13 @@ These instruction are for a dev environment where source files are mounted to al
 ## Incremental Builds
 NOTE: Linux users may be able to build natively, however for consistency it is recommended to always build within the Docker environment.
 
+To update all repos, "git pull" can be used manually for simple targeted updates. To use the VCStool run `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros ./checkout_and_install.sh` when using SSH or anonymous HTTPS (pending public release). For authenticated HTTPS requests, you may need to repeat the initial setup steps due to VCSTool issues with multiple password prompts.
+
 CFE:
 - `docker run --rm -it -v ${PWD}:/shared -w /shared/cFS cfs-base make install`
   
 ROS:
-- `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros colcon build`
+- `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros colcon build --symlink-install`
     
 # Running
 
@@ -67,10 +69,10 @@ Start the system with docker-compose.  See docker-compose documentation for usag
 Log files for each ROS application are saved to brash/*.log. TIP: The tool "multitail" can be installed from most package managers to provide an easy method to tail multiple files at once, ie: `multitail brash/*.log`
 
 To enable TLM output (TODO: Make this automatic):
-- `docker exec -w /shared/brash -it brash-rosgsw-1 ./exec_rosgsw_toen.sh`
+- `docker-compose exec -w /shared/brash -it rosgsw ./exec_rosgsw_toen.sh`
 
 To open a shell for issuing multiple ROS service commands on the rosgsw instance:
-- `docker exec -it -w /shared/brash -it brash-rosgsw-1 bash`
+- `docker-compose exec -it -w /shared/brash -it rosgsw bash`
 - `source /opt/ros/humble/setup.sh && source install/local_setup.sh`
 - Example commands include the following (see main documentation for more)
   - `ros2 topic pub --once /groundsystem/to_lab_enable_output_cmd cfe_msgs/msg/TOLABEnableOutputCmdt '{"payload":{"dest_ip":"10.5.0.2"}}'`
@@ -78,4 +80,4 @@ To open a shell for issuing multiple ROS service commands on the rosgsw instance
   
 
 For debugging, network activity can be monitored with tshark. The pcap file can be opened in a local Wireshark instance for easier viewing.
-- `docker exec -w /shared -it brash-fsw-1 tshark -w test.pcap -f udp`
+- `docker-compose exec -w /shared -it fsw tshark -w test.pcap -f udp`
