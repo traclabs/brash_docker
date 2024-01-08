@@ -1,0 +1,20 @@
+FROM osrf/ros:humble-desktop
+
+# For usage on ARM-based systems (including Macbook M*) switch to the base image below
+#FROM arm64v8/ros:humble
+
+ARG DEBIAN_FRONTEND=noninteractive   # Prevent prompts during apt installs
+
+# Set git credential helper to aide checkout (only prompt user once during installation if not using ssh keys)
+RUN git config --global credential.helper 'cache --timeout=3600'
+
+# Note: libdwarf, libelf, libsqlite are dependencies of Juicer, usage of which is optional in a configured system.
+RUN apt update && apt install -y python3-pip ros-humble-rqt* libdwarf-dev libelf-dev libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+RUN pip3 install cfdp
+# vcstool - standard part of image
+
+RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+RUN echo 'source /shared/brash/install/local_setup.bash' >> ~/.bashrc
+
+# TODO: Build juicer
+# cd /shared/juicer; make

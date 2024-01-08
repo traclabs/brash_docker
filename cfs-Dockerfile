@@ -1,0 +1,13 @@
+FROM ubuntu
+
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config && rm -rf /var/lib/apt/lists/*
+
+ADD cFS /shared/cFS
+
+WORKDIR /shared/cFS
+RUN make prep SIMULATION=native && make && make install
+
+WORKDIR /shared/cFS/build/exe/cpu2
+
+CMD ./core-cpu2
