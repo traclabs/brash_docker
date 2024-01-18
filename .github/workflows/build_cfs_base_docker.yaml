@@ -1,0 +1,98 @@
+name: Create cfs_base_docker image
+
+on:
+  workflow_dispatch:
+  
+  pull_request:
+    branches:
+      - devel
+      
+env: 
+  # Use docker.io for DockerHub if empty
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+        
+      
+jobs:
+
+  build_brash_noetic:
+  
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write      
+    steps:
+      # Checkout this repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up docker buildx (latest build magic)       
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Log in to Docker registry
+      - name: Log into registry ${{env.REGISTRY}}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{env.REGISTRY}}
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+        
+      
+      # Extract metadata for docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}   
+         
+      # Set up SSH key clone private repositories
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+      
+      # Clone this repository
+      - name: Clone brash_docker and submodules (cFS, brash and juicer)
+        run: |
+          export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+          git clone git@github.com:traclabs/brash_docker.git brash_docker
+          cd brash_docker
+          perl -i -p -e 's|https://(.*?)/|git@\1:|g' .gitmodules
+          git submodule init
+          git submodule update            
+          
+      # Clone brash workspace repositories
+      - name: Clone brash workspace repositories
+        run: |
+          cd brash_docker/brash
+          pip3 install vcstool
+          mkdir src
+          vcs import src < ssh.repos
+
+      # Clone cFS and submodules
+      - name: Clone cFS submodules
+        run: |
+          cd brash_docker/cFS
+          git submodule init
+          git submodule update
+          cp cfe/cmake/Makefile.sample Makefile
+          cp -r cfe/cmake/sample_defs sample_defs
+          
+      # Build and push docker imag with buildx
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v5
+        with:
+          #build-args: SRC_DIR=src
+          context: brash_docker
+          file: ./cfs-Dockerfile
+          push: ${{github.event_name != 'pull_request' }}
+          tags: ${{steps.meta.outputs.tags}}
+          labels: ${{steps.meta.outputs.labels}}
+          no-cache: true
+  
