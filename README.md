@@ -16,49 +16,80 @@ An ARM-based image may be required for proper functionality (and improved perfor
 Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
 
 # Setup
-These instruction are for a dev environment where source files are mounted to allow for easy incremental builds.
+Begin with the 'Common Setup' subsection, then procede to either the Dev or Prod section.
 
-## Pre-requisites
-- All commands should be executed from this folder
-- Ensure network connectivity is available. If running in a VPN, ensure that any related settings or certificates have been setup.
-- Edit brash/checkout_and_install.sh to use ssh.repo if desired (ssh-keys required) in place of the default https.repos.
+The Prod configuration generates a fresh, static build of the complete system with minimal steps.  This mode is suitable for continuous integration systems, demos, and end-user testing.
 
-## Initial Setup
-- Install docker (or podman and alias)
-- Download and build base Docker images
-  - `docker-compose build`
-- Checkout ROS System (note: a single build is used for both fsw and gsw instances)
-  - SSH
-    - Place an SSH Private Key authenticated to your bitbucket account in this folder
-    - `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros bash`
-    - `mkdir ~/.ssh && cp id_rsa ~/.ssh/`
-        - Alternatively, run "ssh-keygen" and cat your public key to add to your bitbucket account
-    - To save your SSH key for future operations run: `docker ps` to identify the name of the running Docker instance, then commit your new key with `docker commit $name brash-ros:latest`
-    - ./checkout_and_install.sh
-  - HTTPS
-    - VCStool does not behave correctly with password prompts, so extra setup is required
-    - Edit brash/checkout_and_install.sh to use https.repos instead of ssh.repos (or run commands manually when indicated below)
-    - `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros bash`
-    - `git config --global credential.helper cache --timeout=86400`    # Set git to cache passwords in memory
-    - `git config --global safe.directory "*"`
-    - Clone a repository (such a this one) temporarily to cache your credentials, then delete it. (WORKAROUND for vcstool bug)
-    - ./checkout_and_install.sh
-- Build cfe
-  - `docker run --rm -it -v ${PWD}:/shared -w /shared/cFS cfs-base make prep SIMULATION=native`
-  - `docker run --rm -it -v ${PWD}:/shared -w /shared/cFS cfs-base make install`
+The Dev configuration is optimized for developers frequently editing and rebuilding. This configuration uses a shared volume to access this folder and allows for quicker iterative builds.
 
-## Incremental Builds
-NOTE: Linux users may be able to build natively, however for consistency it is recommended to always build within the Docker environment.
+## Common Setup
 
-To update all repos, "git pull" can be used manually for simple targeted updates. To use the VCStool run `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros ./checkout_and_install.sh` when using SSH or anonymous HTTPS (pending public release). For authenticated HTTPS requests, you may need to repeat the initial setup steps due to VCSTool issues with multiple password prompts.
+### Pre-requisites
 
-CFE:
-- `docker run --rm -it -v ${PWD}:/shared -w /shared/cFS cfs-base make install`
-  
-ROS:
-- `docker run --rm -it -v ${PWD}:/shared -w /shared/brash brash-ros colcon build --symlink-install`
-    
+docker-compose must be available to build and run.  This setup has been tested using docker, but should also work with podman with minimal effort.
+
+git and vcstool (`pip3 install vcstool`) are required for source code checkout.
+
+All commands should be executed from this folder.
+
+Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before building.  For example adding to ros-base-Dockerfile:
+
+```
+# Corporate Firewall Certificate Configuraiton
+COPY my.cer /usr/local/share/ca-certificates/my.crt
+RUN update-ca-certificates
+```
+
+### Checkout
+
+Recursively clone this repository with `git clone --recursive`.  If you've already cloned the repository without the recursive flag, you may run `git submodule update --init --recursive` to complete the base checkout.
+
+ROS packages are currently configured using the `vcstool`.  This tool can clone the requires repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
+
+```
+pushd brash
+mkdir src
+vcs import src < https.repos     # User choice of https.repos or ssh.repos
+```
+
+## Prod
+
+```
+# Load ENV variables and aliases
+source setup.sh
+
+# Build the Docker containers (this can take several minutes)
+docker-compose build
+
+# Run
+docker-compose up
+```
+
+See the 'Running' section below for additional usage information.
+
+## Dev
+
+```
+source setup_dev.sh
+docker-compose build
+
+# Initial CFE Build
+build_cfe prep SIMULATION=native
+build_cfe install
+
+# ROS Build
+build_ros
+```
+
+For incremental builds, repeat the `build_cfe install` and/or `build_ros` steps as appropriate.  
+
+For a clean cfe build, simply `rm -rf cFS/build` and repeat both build steps above.
+
+For a clean ROS build, `rm -rf brash/build`
+
+
 # Running
+Always run the setup.sh (or the setup_dev.sh) script in every new terminal to configure docker-compose and aliases. Use the 'alias' command, or inspect the contents of these setup scripts for details on interacting with the running system.
 
 Start the system with docker-compose.  See docker-compose documentation for usage details.
 - `docker-compose up -d` to start the system
@@ -66,14 +97,19 @@ Start the system with docker-compose.  See docker-compose documentation for usag
 - `docker-compose down` to stop the system
 - `docker-compose restart ${NAME}` to restart a single service. Defined services are fsw, rosgsw, and rosfsw.
 
+CFE output is shown directly in the shell.  If you started docker-compose in daemon mode (or for a filtered log), simply run `docker-compose logs fsw`.
+
 Log files for each ROS application are saved to brash/*.log. TIP: The tool "multitail" can be installed from most package managers to provide an easy method to tail multiple files at once, ie: `multitail brash/*.log`
 
 To enable TLM output (TODO: Make this automatic):
-- `docker-compose exec -w /shared/brash -it rosgsw ./exec_rosgsw_toen.sh`
+- `ros_to_en`
+
+A "noVNC" server is included in this docker-compose setup for easy execution of GUI applications.  Any GUI launched from the rosgsw or rosfsw machines will be accessible at http://localhost:8080/vnc.html   
+
+An alias to launch the rqt tool on rosgsw is `rosgsw_rqt`.  
 
 To open a shell for issuing multiple ROS service commands on the rosgsw instance:
 - `docker-compose exec -it -w /shared/brash -it rosgsw bash`
-- `source /opt/ros/humble/setup.sh && source install/local_setup.sh`
 - Example commands include the following (see main documentation for more)
   - `ros2 topic pub --once /groundsystem/to_lab_enable_output_cmd cfe_msgs/msg/TOLABEnableOutputCmdt '{"payload":{"dest_ip":"10.5.0.2"}}'`
   - `ros2 service call /cfdp/cmd/put cfdp_msgs/srv/CfdpXfrCmd '{src: "test1.txt", dst: "test2.txt", "dstid" :2}'`
