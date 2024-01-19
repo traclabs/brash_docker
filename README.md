@@ -1,10 +1,10 @@
 **Table of Contents:**
 
-1. [Setup](#setup)
+1. [Building the Docker image](#setup)
    - [Common Setup](#common-setup)
-   - [Production setup](#prod)
-   - [Devel setup](#dev) 
-3. [Running the Docker](#running)
+   - [Build Production mode](#prod)
+   - [Build Devel mode](#dev) 
+3. [Running the Docker images](#running-the-docker-images)
    
 
 # Docker Test Environment
@@ -80,7 +80,7 @@ docker-compose build
 docker-compose up
 ```
 
-See the [Running](#running) section below for additional usage information.
+See the [Running](#running-the-docker-images) section below for additional usage information.
 
 ## Dev
 In your terminal:
@@ -107,10 +107,14 @@ For a clean cfe build, simply `rm -rf cFS/build` and repeat both build steps abo
 For a clean ROS build, `rm -rf brash/build`
 
 
-# Running
-Always run the setup.sh (or the setup_dev.sh) script in every new terminal to configure docker-compose and aliases. Use the 'alias' command, or inspect the contents of these setup scripts for details on interacting with the running system.
+# Running the Docker images
 
-Start the system with docker-compose.  See docker-compose documentation for usage details.
+Always run the setup script in every new terminal to configure docker-compose and aliases. Use the 'alias' command, or inspect the contents of these setup scripts for details on interacting with the running system:
+```
+ $ ./setup.sh  # or setup_dev.sh, if in devel mode 
+```
+
+Start the system with **docker-compose**.  See docker-compose documentation for usage details.
 - `docker-compose up -d` to start the system
   - The '-d' flag causes docker to startup in the background as a daemon. Omit to keep it in the foreground
 - `docker-compose down` to stop the system
