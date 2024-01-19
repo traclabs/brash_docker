@@ -1,3 +1,8 @@
+# Table of Contents:
+1. [Setup](#setup)
+2. [Running the Docker](#running)
+   
+
 # Docker Test Environment
 
 NOTE: Static IP addresses are required because cFE does not support DNS lookup and requires IP address to be pre-compiled in the SBN configuration table.  To use dynamic IPs, we would need to re-compile the cfe tables on each startup of the system.  
@@ -16,7 +21,7 @@ An ARM-based image may be required for proper functionality (and improved perfor
 Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
 
 # Setup
-Begin with the 'Common Setup' subsection, then procede to either the Dev or Prod section.
+Begin with the [**Common Setup**](#common-setup) subsection, then procede to either the [Dev](#dev) or [Prod](#prod) section.
 
 The Prod configuration generates a fresh, static build of the complete system with minimal steps.  This mode is suitable for continuous integration systems, demos, and end-user testing.
 
