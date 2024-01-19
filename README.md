@@ -44,7 +44,7 @@ RUN update-ca-certificates
 
 Recursively clone this repository with `git clone --recursive`.  If you've already cloned the repository without the recursive flag, you may run `git submodule update --init --recursive` to complete the base checkout.
 
-ROS packages are currently configured using the `vcstool`.  This tool can clone the requires repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
+ROS packages are currently configured using the `vcstool`.  This tool clones the required repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
 
 ```
 pushd brash
