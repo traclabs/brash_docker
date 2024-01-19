@@ -1,0 +1,44 @@
+services:
+  fsw:
+    extends:
+      file: docker-compose-prod.yml
+      service: fsw
+    volumes:
+      - ".:/shared"
+    working_dir: /shared/cFS/build/exe/cpu2
+  rosgsw:
+    extends:
+      file: docker-compose-prod.yml
+      service: rosgsw
+    image: "brash-ros-base"
+    build:
+      # NOTE: Actual build process must be executed discretely for dev mounts
+      context: .
+      dockerfile: ros-base-Dockerfile
+      target: brash-ros-base
+    volumes:
+      - ".:/shared"
+    working_dir: /shared/brash
+  rosfsw:
+    extends:
+      file: docker-compose-prod.yml
+      service: rosfsw
+    image: "brash-ros-base"
+    volumes:
+      - ".:/shared"
+    working_dir: /shared/brash
+  novnc:
+    extends:
+      file: docker-compose-prod.yml
+      service: novnc
+# NOTE: networks apparently can't be imported from related file?
+networks:
+  spaceip:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
+
+      
+      

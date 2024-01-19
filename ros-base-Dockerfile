@@ -1,7 +1,7 @@
-FROM osrf/ros:humble-desktop
+FROM osrf/ros:humble-desktop AS brash-ros-base
 
 # For usage on ARM-based systems (including Macbook M*) switch to the base image below
-#FROM arm64v8/ros:humble
+#FROM arm64v8/ros:humble AS brash-ros-base
 
 ARG DEBIAN_FRONTEND=noninteractive   # Prevent prompts during apt installs
 
@@ -18,3 +18,13 @@ RUN echo 'source /shared/brash/install/local_setup.bash' >> ~/.bashrc
 
 # TODO: Build juicer
 # cd /shared/juicer; make
+
+
+## Production Build
+FROM brash-ros-base AS brash-ros
+RUN sed -i '$ d' ~/.bashrc   # Delete DEV-only source
+RUN echo 'source brash/install/local_setup.bash' >> ~/.bashrc
+ADD brash /brash
+WORKDIR /brash
+
+RUN colcon build
