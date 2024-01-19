@@ -23,9 +23,9 @@ Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
 # Setup
 Begin with the [**Common Setup**](#common-setup) subsection, then procede to either the [Dev](#dev) or [Prod](#prod) section.
 
-The Prod configuration generates a fresh, static build of the complete system with minimal steps.  This mode is suitable for continuous integration systems, demos, and end-user testing.
+**[Prod](#prod) setup** : This generates a fresh, static build of the complete system with minimal steps. This mode is suitable for continuous integration systems, demos, and end-user testing.
 
-The Dev configuration is optimized for developers frequently editing and rebuilding. This configuration uses a shared volume to access this folder and allows for quicker iterative builds.
+**[Dev](#dev) setup** : This configuration is optimized for developers frequently editing and rebuilding. This configuration uses a shared volume to access this folder and allows for quicker iterative builds.
 
 ## Common Setup
 
