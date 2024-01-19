@@ -1,7 +1,10 @@
 **Table of Contents:**
 
 1. [Setup](#setup)
-2. [Running the Docker](#running)
+   - [Common Setup](#common-setup)
+   - [Production setup](#prod)
+   - [Devel setup](#dev) 
+3. [Running the Docker](#running)
    
 
 # Docker Test Environment
@@ -32,35 +35,41 @@ Begin with the [**Common Setup**](#common-setup) subsection, then procede to eit
 
 ### Pre-requisites
 
-docker-compose must be available to build and run.  This setup has been tested using docker, but should also work with podman with minimal effort.
+- **docker-compose** must be available to build and run.  This setup has been tested using docker, but should also work with **podman** with minimal effort.
+- **git** and **vcstool** are required for source code checkout (`pip3 install vcstool`).
+- All commands should be executed from this folder.
+- Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before
+  building.  For example adding to *ros-base-Dockerfile* :
 
-git and vcstool (`pip3 install vcstool`) are required for source code checkout.
-
-All commands should be executed from this folder.
-
-Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before building.  For example adding to ros-base-Dockerfile:
-
-```
-# Corporate Firewall Certificate Configuraiton
-COPY my.cer /usr/local/share/ca-certificates/my.crt
-RUN update-ca-certificates
-```
+   ```
+   # Corporate Firewall Certificate Configuraiton
+   COPY my.cer /usr/local/share/ca-certificates/my.crt
+   RUN update-ca-certificates
+   ```
 
 ### Checkout
 
-Recursively clone this repository with `git clone --recursive`.  If you've already cloned the repository without the recursive flag, you may run `git submodule update --init --recursive` to complete the base checkout.
+1. Recursively clone this repository:
+   ```
+   git clone --recursive git@github.com:traclabs/brash_docker
+   ```
+   If you've already cloned the repository without the recursive flag, you may run `git submodule update --init --recursive` to complete the base checkout.
 
-ROS packages are currently configured using the `vcstool`.  This tool can clone the requires repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
+2. ROS packages are currently configured using the `vcstool`.  This tool can clone the requires repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
 
-```
-pushd brash
-mkdir src
-vcs import src < https.repos     # User choice of https.repos or ssh.repos
-```
+   ```
+   pushd brash
+   mkdir src
+   vcs import src < https.repos     # User choice of https.repos or ssh.repos
+   ```
 
 ## Prod
 
+In your terminal:
 ```
+# Go to your main repository folder, for instance
+cd ${HOME}/brash_docker 
+
 # Load ENV variables and aliases
 source setup.sh
 
@@ -71,11 +80,15 @@ docker-compose build
 docker-compose up
 ```
 
-See the 'Running' section below for additional usage information.
+See the [Running](#running) section below for additional usage information.
 
 ## Dev
-
+In your terminal:
 ```
+# Go to your main repository folder, for instance
+cd ${HOME}/brash_docker
+
+# Run docker compose
 source setup_dev.sh
 docker-compose build
 
