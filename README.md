@@ -55,7 +55,7 @@ Begin with the [**Common Setup**](#common-setup) subsection, then procede to eit
    ```
    If you've already cloned the repository without the recursive flag, you may run `git submodule update --init --recursive` to complete the base checkout.
 
-2. ROS packages are currently configured using the `vcstool`.  This tool can clone the requires repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
+2. ROS packages are currently configured using the `vcstool`.  This tool clones the required repositories (which will be downloaded to brash/src) using either https or ssh based Github links.
 
    ```
    pushd brash
