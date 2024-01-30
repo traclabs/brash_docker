@@ -102,7 +102,7 @@ build_ros
 
 For incremental builds, repeat the `build_cfe install` and/or `build_ros` steps as appropriate.  
 
-For a clean cfe build, simply `rm -rf cFS/build` and repeat both build steps above.
+A clean cfe build can be achieved with `build_cfe clean && build_cfe install`.  Alternatively, simply `rm -rf cFS/build` and repeat both build steps above for a fresh start.
 
 For a clean ROS build, `rm -rf brash/build`
 
