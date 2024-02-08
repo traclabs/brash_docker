@@ -3,7 +3,8 @@ FROM osrf/ros:humble-desktop AS brash-ros-base
 # For usage on ARM-based systems (including Macbook M*) switch to the base image below
 #FROM arm64v8/ros:humble AS brash-ros-base
 
-ARG DEBIAN_FRONTEND=noninteractive   # Prevent prompts during apt installs
+# Prevent prompts during apt installs
+ARG DEBIAN_FRONTEND=noninteractive 
 
 # Set git credential helper to aide checkout (only prompt user once during installation if not using ssh keys)
 RUN git config --global credential.helper 'cache --timeout=3600'
