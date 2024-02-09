@@ -10,7 +10,16 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN git config --global credential.helper 'cache --timeout=3600'
 
 # Note: libdwarf, libelf, libsqlite are dependencies of Juicer, usage of which is optional in a configured system.
-RUN apt update && apt install -y python3-pip ros-humble-rqt* libdwarf-dev libelf-dev libsqlite3-dev && rm -rf /var/lib/apt/lists/*
+RUN apt update \ 
+    && apt install -y \ 
+    python3-pip \ 
+    ros-humble-rqt* \
+    ros-humble-joint-state-publisher-gui \
+    libdwarf-dev \
+    libelf-dev \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
+    
 RUN pip3 install cfdp
 # vcstool - standard part of image
 
