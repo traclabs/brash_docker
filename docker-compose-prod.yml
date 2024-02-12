@@ -4,7 +4,6 @@ services:
   fsw:
     image: "cfs-base"
     command: "./core-cpu2"
-    ipc: "host"
     environment:
       - DISPLAY=novnc:0.0
     networks:
