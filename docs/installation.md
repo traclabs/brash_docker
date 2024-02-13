@@ -3,7 +3,7 @@ Installation
 
 **WARNING** : These are preliminary instructions to build Docker images
 using Github actions. They could also be used by users who have their
-bitbucket and github repositories set to use SSH in their machines.
+github repositories set to use SSH in their machines.
 At this stage, they are just for testing so do NOT use. Refer to the main 
 README instead.
 
