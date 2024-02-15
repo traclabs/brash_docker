@@ -86,30 +86,18 @@ jobs:
           build_cfe prep SIMULATION=native
           build_cfe install          
       
-      # Create a dummy dockerfile for build-and-push
-      # this dummy will use as base cfs-base / brash-ros-base
-      - name: Create temp cfs-base dockerfile
+      # Push cfs_base image, after tagging it correctly
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push cfs_base
         run: |
-          touch cfs_base_temp.Dockerfile
-          echo "FROM cfs-base" > cfs_base_temp.Dockerfile
-          echo "running ls"
-          ls
-          echo "Checking images"
-          docker image ls
-          echo "Location"
-          pwd
-          
-          
-      # Build the cfs-base docker image  and push it with buildx
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v5
-        with:
-          #build-args: SRC_DIR=src
-          context: .
-          file: ./cfs_base_temp.Dockerfile
-          push: ${{github.event_name != 'pull_request' }}
-          tags: cfs-base #${{steps.meta.outputs.tags}}
-          labels: ${{steps.meta.outputs.labels}}
-          no-cache: true
-  
+          echo "testing: "
+          echo "${{env.REGISTRY}}"
+          echo "testing 2"
+          echo "${{env.IMAGE_NAME}}"
+          echo "Setting remote tag"
+          remote_tag="ghcr.io/traclabs/brash_docker:cfe-base"
+          echo "Docker tag"
+          docker tag cfs-base $remote_tag
+          echo "Docker push"
+          docker push $remote_tag
+      
