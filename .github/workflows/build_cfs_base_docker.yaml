@@ -1,4 +1,4 @@
-name: Create cfs_base_docker image
+name: Create cfs-base and brash-ros-base docker images
 
 on:
   workflow_dispatch:
