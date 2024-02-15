@@ -72,7 +72,6 @@ jobs:
         run: |
           echo "Print current location 3 = is it in brash?"
           pwd
-          cd ..          
           shopt -s expand_aliases        
           source setup_dev.sh
           
