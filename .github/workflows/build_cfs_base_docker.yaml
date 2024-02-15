@@ -2,7 +2,7 @@ name: Create cfs_base_docker image
 
 on:
   workflow_dispatch:
-  
+   # Push
   pull_request:
     branches:
       - devel
