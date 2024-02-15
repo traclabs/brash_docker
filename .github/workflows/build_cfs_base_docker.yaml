@@ -93,6 +93,8 @@ jobs:
           ls
           echo "Checking images"
           docker image ls
+          echo "Location"
+          pwd
           
           
       # Build the cfs-base docker image  and push it with buildx
