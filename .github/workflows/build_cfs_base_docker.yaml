@@ -51,17 +51,11 @@ jobs:
       # This repository is checked out! It needs to pull recursively
       - name: Clone brash_docker and submodules (cFS, brash and juicer)
         run: |
-          echo "Print current location 1"
-          pwd
           git submodule update --init --recursive                    
           
       # Clone brash workspace repositories
       - name: Clone brash workspace repositories
         run: |
-          echo "Print current location 2"
-          pwd
-          echo "Print ls"
-          ls
           cd brash
           pip3 install vcstool
           mkdir src
@@ -70,34 +64,44 @@ jobs:
       # Source setup_dev and call docker-compose build
       - name: Source setup_dev and call docker-compose build
         run: |
-          echo "Print current location 3 = is it in brash?"
-          pwd
           shopt -s expand_aliases        
           source setup_dev.sh
           
           docker-compose build
           
-      # Build cfs_base (call build_cfe)
-      - name: Build cfs_base
+      # Build cfs_base
+      - name: Build cfs-base
         run: |
           shopt -s expand_aliases
           source setup_dev.sh
           
           build_cfe prep SIMULATION=native
           build_cfe install          
-      
-      # Push cfs_base image, after tagging it correctly
-      # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push cfs_base
+
+      # Build brash-ros-base
+      - name: Build brash-ros-base
         run: |
-          echo "testing: "
-          echo "${{env.REGISTRY}}"
-          echo "testing 2"
-          echo "${{env.IMAGE_NAME}}"
-          echo "Setting remote tag"
-          remote_tag="ghcr.io/traclabs/brash_docker:cfe-base"
-          echo "Docker tag"
-          docker tag cfs-base $remote_tag
-          echo "Docker push"
+          shopt -s expand_aliases
+          source setup_dev.sh
+          
+          build_ros          
+
+      
+      # Push cfs-base image
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push cfs-base
+        run: |
+          local_tag="cfe-base"
+          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
+          docker tag $local_tag $remote_tag
+          docker push $remote_tag
+      
+      # Push brash-ros-base image
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push brash-ros-base
+        run: |
+          local_tag = "brash-ros-base"
+          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
+          docker tag $local_tag $remote_tag
           docker push $remote_tag
       
