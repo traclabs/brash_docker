@@ -91,7 +91,7 @@ jobs:
       # (not using build-and-push action as passing images is giving me trouble)
       - name: Push cfs-base
         run: |
-          local_tag="cfe-base"
+          local_tag="cfs-base"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
