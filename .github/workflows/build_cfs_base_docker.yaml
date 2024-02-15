@@ -48,24 +48,31 @@ jobs:
         with:
           images: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}   
       
-      # Clone this repository
+      # This repository is checked out! It needs to pull recursively
       - name: Clone brash_docker and submodules (cFS, brash and juicer)
         run: |
-          git clone --recursive http://github.com/traclabs/brash_docker.git brash_docker                    
+          echo "Print current location 1"
+          pwd
+          git submodule update --init --recursive                    
           
       # Clone brash workspace repositories
       - name: Clone brash workspace repositories
         run: |
-          cd brash_docker/brash
+          echo "Print current location 2"
+          pwd
+          echo "Print ls"
+          ls
+          cd brash
           pip3 install vcstool
           mkdir src
           vcs import src < https.repos
-
+          
       # Source setup_dev and call docker-compose build
       - name: Source setup_dev and call docker-compose build
         run: |
-          cd brash_docker
-          
+          echo "Print current location 3 = is it in brash?"
+          pwd
+          cd ..          
           shopt -s expand_aliases        
           source setup_dev.sh
           
@@ -74,8 +81,6 @@ jobs:
       # Build cfs_base (call build_cfe)
       - name: Build cfs_base
         run: |
-          cd brash_docker
-          
           shopt -s expand_aliases
           source setup_dev.sh
           
@@ -86,7 +91,6 @@ jobs:
       # this dummy will use as base cfs-base / brash-ros-base
       - name: Create temp cfs-base dockerfile
         run: |
-          cd brash_docker
           touch cfs_base_temp.Dockerfile
           echo "FROM cfs-base" > cfs_base_temp.Dockerfile
           echo "running ls"
@@ -103,7 +107,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           #build-args: SRC_DIR=src
-          context: brash_docker
+          context: .
           file: ./cfs_base_temp.Dockerfile
           push: ${{github.event_name != 'pull_request' }}
           tags: cfs-base #${{steps.meta.outputs.tags}}
