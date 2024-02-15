@@ -47,24 +47,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}   
-         
-      # Set up SSH key clone private repositories
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
       
       # Clone this repository
       - name: Clone brash_docker and submodules (cFS, brash and juicer)
         run: |
-          export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-          git clone git@github.com:traclabs/brash_docker.git brash_docker
-          cd brash_docker
-          perl -i -p -e 's|https://(.*?)/|git@\1:|g' .gitmodules
-          git submodule init
-          git submodule update            
+          git clone --recursive git@github.com:traclabs/brash_docker.git brash_docker                    
           
       # Clone brash workspace repositories
       - name: Clone brash workspace repositories
@@ -72,27 +59,31 @@ jobs:
           cd brash_docker/brash
           pip3 install vcstool
           mkdir src
-          vcs import src < ssh.repos
+          vcs import src < https.repos
 
-      # Clone cFS and submodules
-      - name: Clone cFS submodules
+      # Source setup_dev and call docker-compose build
+      - name: Source setup_dev
         run: |
-          cd brash_docker/cFS
-          git submodule init
-          git submodule update
-          cp cfe/cmake/Makefile.sample Makefile
-          cp -r cfe/cmake/sample_defs sample_defs
+          cd brash_docker
+          source setup_dev.sh
+          docker-compose build
           
-      # Build and push docker imag with buildx
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v5
-        with:
-          #build-args: SRC_DIR=src
-          context: brash_docker
-          file: ./cfs-Dockerfile
-          push: ${{github.event_name != 'pull_request' }}
-          tags: ${{steps.meta.outputs.tags}}
-          labels: ${{steps.meta.outputs.labels}}
-          no-cache: true
+      # Build cfs_base
+      - name: Build
+        run: |
+          build_cfe prep SIMULATION=native
+          build_cfe install          
+          
+      # Build the cfs-base docker image  and push it with buildx
+      #- name: Build and push Docker image
+      #  id: build-and-push
+      #  uses: docker/build-push-action@v5
+      #  with:
+      #    #build-args: SRC_DIR=src
+      #    context: brash_docker
+      #    file: ./cfs-Dockerfile
+      #    push: ${{github.event_name != 'pull_request' }}
+      #    tags: ${{steps.meta.outputs.tags}}
+      #    labels: ${{steps.meta.outputs.labels}}
+      #    no-cache: true
   
