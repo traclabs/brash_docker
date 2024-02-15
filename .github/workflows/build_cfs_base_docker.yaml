@@ -89,6 +89,11 @@ jobs:
           cd brash_docker
           touch cfs_base_temp.Dockerfile
           echo "FROM cfs-base" > cfs_base_temp.Dockerfile
+          echo "running ls"
+          ls
+          echo "Checking images"
+          docker image ls
+          
           
       # Build the cfs-base docker image  and push it with buildx
       - name: Build and push Docker image
