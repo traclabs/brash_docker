@@ -51,7 +51,7 @@ jobs:
       # Clone this repository
       - name: Clone brash_docker and submodules (cFS, brash and juicer)
         run: |
-          git clone --recursive git@github.com:traclabs/brash_docker.git brash_docker                    
+          git clone --recursive http://github.com/traclabs/brash_docker.git brash_docker                    
           
       # Clone brash workspace repositories
       - name: Clone brash workspace repositories
