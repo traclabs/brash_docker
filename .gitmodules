@@ -1,9 +1,9 @@
 [submodule "cFS"]
 	path = cFS
-	url = https://github.com/traclabs/cFS.git
+	url = ../cFS.git
 [submodule "brash"]
 	path = brash
-	url = https://github.com/traclabs/brash.git
+	url = ../brash.git
 [submodule "juicer"]
 	path = juicer
-	url = https://github.com/WindhoverLabs/juicer.git
+	url = ../../WindhoverLabs/juicer.git
