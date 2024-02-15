@@ -62,15 +62,17 @@ jobs:
           vcs import src < https.repos
 
       # Source setup_dev and call docker-compose build
-      - name: Source setup_dev
+      - name: Source setup_dev and call docker-compose build
         run: |
           cd brash_docker
           source setup_dev.sh
           docker-compose build
           
-      # Build cfs_base
+      # Build cfs_base (call build_cfe)
       - name: Build
         run: |
+          cd brash_docker
+          source setup_dev.sh
           build_cfe prep SIMULATION=native
           build_cfe install          
           
