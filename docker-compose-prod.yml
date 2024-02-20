@@ -23,6 +23,7 @@ services:
       context: .
       dockerfile: ros-base-Dockerfile
     environment:
+      - ROS_DOMAIN_ID=2
       - DISPLAY=novnc:0.0
     networks:
       spaceip:
@@ -33,6 +34,7 @@ services:
     env_file:
       - env.sh
     environment:
+      - ROS_DOMAIN_ID=4
       - DISPLAY=novnc:0.0
     networks:
       spaceip:
