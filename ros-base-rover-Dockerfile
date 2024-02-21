@@ -1,0 +1,61 @@
+FROM osrf/ros:humble-desktop AS brash-ros-base-rover
+
+# For usage on ARM-based systems (including Macbook M*) switch to the base image below
+#FROM arm64v8/ros:humble AS brash-ros-base
+
+ARG DEBIAN_FRONTEND=noninteractive   # Prevent prompts during apt installs
+
+# Set git credential helper to aide checkout (only prompt user once during installation if not using ssh keys)
+RUN git config --global credential.helper 'cache --timeout=3600'
+
+# Note: libdwarf, libelf, libsqlite are dependencies of Juicer, usage of which is optional in a configured system.
+RUN apt update \ 
+    && apt install -y \ 
+    python3-pip \ 
+    ros-humble-rqt* \
+    ros-humble-joint-state-publisher-gui \
+    libdwarf-dev \
+    libelf-dev \
+    libsqlite3-dev \  
+    ignition-fortress \
+    ros-humble-xacro \
+    ros-humble-joint-state-publisher \
+    ros-humble-srdfdom \
+    ros-humble-controller-interface \
+    ros-humble-realtime-tools \
+    ros-humble-control-toolbox \
+    ros-humble-joint-state-publisher-gui \
+    ros-humble-geometric-shapes \
+    ros-humble-controller-manager \
+    ros-humble-joint-trajectory-controller \
+    ros-humble-ros-gz-sim \
+    ros-humble-ros-gz-bridge \
+    ros-humble-robot-localization \
+    ros-humble-interactive-marker-twist-server \
+    ros-humble-twist-mux \
+    ros-humble-joy-linux \
+    ros-humble-imu-tools \
+    ros-humble-ign-ros2-control \
+    ros-humble-joint-state-broadcaster \
+    ros-humble-diff-drive-controller \
+    && rm -rf /var/lib/apt/lists/*
+    
+RUN pip3 install cfdp
+# vcstool - standard part of image
+
+
+RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+RUN echo 'source /shared/brash/install/local_setup.bash' >> ~/.bashrc
+
+# TODO: Build juicer
+# cd /shared/juicer; make
+
+
+## Production Build
+FROM brash-ros-base-rover AS brash-ros-rover
+RUN sed -i '$ d' ~/.bashrc   # Delete DEV-only source
+RUN echo 'source brash/install/local_setup.bash' >> ~/.bashrc
+ADD brash /brash
+WORKDIR /brash
+
+RUN colcon build
