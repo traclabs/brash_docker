@@ -14,7 +14,7 @@ services:
     build:
       # NOTE: Actual build process must be executed discretely for dev mounts
       context: .
-      dockerfile: ros-base-rover-Dockerfile
+      dockerfile: config/rover_demo/ros-base-rover.Dockerfile
       target: brash-ros-base-rover
     volumes:
       - ".:/shared"
