@@ -1,8 +1,8 @@
-name: Create cfs_base_docker image
+name: Create cfs-base and brash-ros-base docker images
 
 on:
   workflow_dispatch:
-  
+   # Push
   pull_request:
     branches:
       - devel
@@ -47,52 +47,61 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}   
-         
-      # Set up SSH key clone private repositories
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
       
-      # Clone this repository
+      # This repository is checked out! It needs to pull recursively
       - name: Clone brash_docker and submodules (cFS, brash and juicer)
         run: |
-          export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
-          git clone git@github.com:traclabs/brash_docker.git brash_docker
-          cd brash_docker
-          perl -i -p -e 's|https://(.*?)/|git@\1:|g' .gitmodules
-          git submodule init
-          git submodule update            
+          git submodule update --init --recursive                    
           
       # Clone brash workspace repositories
       - name: Clone brash workspace repositories
         run: |
-          cd brash_docker/brash
+          cd brash
           pip3 install vcstool
           mkdir src
-          vcs import src < ssh.repos
-
-      # Clone cFS and submodules
-      - name: Clone cFS submodules
-        run: |
-          cd brash_docker/cFS
-          git submodule init
-          git submodule update
-          cp cfe/cmake/Makefile.sample Makefile
-          cp -r cfe/cmake/sample_defs sample_defs
+          vcs import src < https.repos
           
-      # Build and push docker imag with buildx
-      - name: Build and push Docker image
-        id: build-and-push
-        uses: docker/build-push-action@v5
-        with:
-          #build-args: SRC_DIR=src
-          context: brash_docker
-          file: ./cfs-Dockerfile
-          push: ${{github.event_name != 'pull_request' }}
-          tags: ${{steps.meta.outputs.tags}}
-          labels: ${{steps.meta.outputs.labels}}
-          no-cache: true
-  
+      # Source setup_dev and call docker-compose build
+      - name: Source setup_dev and call docker-compose build
+        run: |
+          shopt -s expand_aliases        
+          source setup_dev.sh
+          
+          docker-compose build
+          
+      # Build cfs_base
+      - name: Build cfs-base
+        run: |
+          shopt -s expand_aliases
+          source setup_dev.sh
+          
+          build_cfe prep SIMULATION=native
+          build_cfe install          
+
+      # Build brash-ros-base
+      - name: Build brash-ros-base
+        run: |
+          shopt -s expand_aliases
+          source setup_dev.sh
+          
+          build_ros          
+
+      
+      # Push cfs-base image
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push cfs-base
+        run: |
+          local_tag="cfs-base"
+          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
+          docker tag $local_tag $remote_tag
+          docker push $remote_tag
+      
+      # Push brash-ros-base image
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push brash-ros-base
+        run: |
+          local_tag="brash-ros-base"
+          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
+          docker tag $local_tag $remote_tag
+          docker push $remote_tag
+      
