@@ -17,7 +17,11 @@ $ docker compose --project-directory . -f config/rover_demo/docker-compose-dev-r
 ```
 $ docker compose --project-directory . -f config/rover_demo/docker-compose-dev-rover.yml  run  -w /shared/brash rosgsw  colcon build --symlink-install
 ```
+# Build brash
 
+```
+$ docker compose --project-directory . -f config/rover_demo/docker-compose-dev-rover.yml run -w /shared/brash rosfsw colcon build --symlink-install
+```
 
 #RUN!!!
 
