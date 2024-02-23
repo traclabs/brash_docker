@@ -1,11 +1,9 @@
-version: "3.0"
+version: "3.8"
 services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
     image: "cfs-base"
     command: "./core-cpu2"
-    # privileged is needed to avoid issues with mqueues. Running as non-root user may be an alternative
-    privileged: true
     environment:
       - DISPLAY=novnc:0.0
     networks:

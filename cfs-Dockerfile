@@ -1,13 +1,20 @@
 FROM ubuntu
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config sudo && rm -rf /var/lib/apt/lists/*
 
-ADD cFS /cFS
+ARG USERNAME=cfs
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -s /sbin/nologin -m -c "CFS User" $USERNAME
+USER $USERNAME
 
+# Note: ADD/COPY doesn't respect USER directive above, so explicit chown is required
+ADD --chown=$USERNAME:$USERNAME cFS /cFS
 WORKDIR /cFS
+
 RUN make prep SIMULATION=native && make && make install
 
 WORKDIR /cFS/build/exe/cpu2
-
 CMD ./core-cpu2

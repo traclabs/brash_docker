@@ -7,5 +7,5 @@ source setup.sh
 export COMPOSE_FILE=docker-compose-dev.yml
 
 # Dev-specific commands
-alias build_cfe="docker-compose run -w /shared/cFS fsw make"
-alias build_ros="docker-compose run -w /shared/brash rosgsw colcon build --symlink-install"
+alias build_cfe="pushd ${BRASH_HOME} && docker-compose run -w /shared/cFS fsw make && popd"
+alias build_ros="pushd ${BRASH_HOME} && docker-compose run -w /shared/brash rosgsw colcon build --symlink-install && popd"
