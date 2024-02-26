@@ -6,6 +6,13 @@ FROM osrf/ros:humble-desktop AS brash-ros-base
 # Prevent prompts during apt installs
 ARG DEBIAN_FRONTEND=noninteractive 
 
+ARG USERNAME=brash_user
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -s /sbin/nologin -m -c "Brash User" $USERNAME
+USER $USERNAME
+
 # Set git credential helper to aide checkout (only prompt user once during installation if not using ssh keys)
 RUN git config --global credential.helper 'cache --timeout=3600'
 
@@ -24,17 +31,17 @@ RUN pip3 install cfdp
 # vcstool - standard part of image
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
-RUN echo 'source /shared/brash/install/local_setup.bash' >> ~/.bashrc
+RUN echo 'source /src/brash/install/local_setup.bash' >> ~/.bashrc
 
 # TODO: Build juicer
-# cd /shared/juicer; make
+# cd /src/juicer; make
 
 
 ## Production Build
 FROM brash-ros-base AS brash-ros
 RUN sed -i '$ d' ~/.bashrc   # Delete DEV-only source
-RUN echo 'source brash/install/local_setup.bash' >> ~/.bashrc
-ADD brash /brash
-WORKDIR /brash
+RUN echo 'source /src/brash/install/local_setup.bash' >> ~/.bashrc
+ADD brash /src/brash
+WORKDIR /src/brash
 
 RUN colcon build
