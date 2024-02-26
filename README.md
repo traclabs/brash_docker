@@ -38,7 +38,7 @@ Begin with the [**Common Setup**](#common-setup) subsection, then procede to eit
 
 ### Pre-requisites
 
-- **docker-compose** must be available to build and run.  This setup has been tested using docker, but should also work with **podman** with minimal effort.
+- **docker-compose** must be available to build and run (you can install Docker Engine following [these instructions](https://docs.docker.com/engine/install/ubuntu/)).  This setup has been tested using docker, but should also work with **podman** with minimal effort.
 - **git** and **vcstool** are required for source code checkout (`pip3 install vcstool`).
 - All commands should be executed from this folder.
 - Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before
