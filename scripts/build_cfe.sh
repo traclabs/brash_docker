@@ -3,14 +3,11 @@
 echo ""
 echo "##### Building cfe #####"
 echo ""
-echo "Set compose file"
 COMPOSE_FILE="docker-compose-dev.yml"
-echo "Code dir"
 CODE_DIR="/code"
-echo "Set uid"
-echo "UID: ${UID}"
+echo "** UID: ${UID}"
 echo "Run docker compose config.."
-docker compose -f ${COMPOSE_FILE} config
+env UID=${UID}  docker compose -f ${COMPOSE_FILE} config
 
 echo "Print UID: ${UID}"
 echo "Try to run first compose"
