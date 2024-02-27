@@ -8,7 +8,7 @@ COMPOSE_FILE="docker-compose-dev.yml"
 CODE_DIR="/code"
 export UID=$UID
 
-docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}aaaaa/cFS fsw make SIMULATION=native prep
+docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make SIMULATION=native prep
 ret=$?
 if [ $ret -ne 0 ]; then
   echo "!! Failed in make SIMULATION step !!"
