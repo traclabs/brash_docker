@@ -18,23 +18,41 @@ RUN apt update \
     libdwarf-dev \
     libelf-dev \
     libsqlite3-dev \
+    sqlitebrowser \
     && rm -rf /var/lib/apt/lists/*
+
+# Switch to bash shell
+SHELL ["/bin/bash", "-c"]
+
+# Create a brash user
+ENV USERNAME brash_user
+ENV HOME_DIR=/home/${USERNAME}
+ENV CODE_DIR=/code
+
+# Dev container arguments
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+
+# Create new user and home directory
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+&& useradd --uid ${USER_UID} --gid ${USER_GID} --create-home ${USERNAME} \
+&& echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+&& chmod 0440 /etc/sudoers.d/${USERNAME} \
+&& mkdir -p ${CODE_DIR} \
+&& chown -R ${USER_UID}:${USER_GID} ${CODE_DIR}
+
+USER ${USERNAME}
+WORKDIR ${CODE_DIR}
     
 RUN pip3 install cfdp
-# vcstool - standard part of image
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
-RUN echo 'source /shared/brash/install/local_setup.bash' >> ~/.bashrc
+RUN echo 'source ${CODE_DIR}/brash/install/local_setup.bash' >> ~/.bashrc
 
-# TODO: Build juicer
-# cd /shared/juicer; make
+# Juicer
+COPY --chown=$USERNAME:$USERNAME juicer ${CODE_DIR}/juicer
+WORKDIR ${CODE_DIR}/juicer
+RUN make 
 
 
-## Production Build
-FROM brash-ros-base AS brash-ros
-RUN sed -i '$ d' ~/.bashrc   # Delete DEV-only source
-RUN echo 'source brash/install/local_setup.bash' >> ~/.bashrc
-ADD brash /brash
-WORKDIR /brash
-
-RUN colcon build
+WORKDIR ${CODE_DIR}/brash
