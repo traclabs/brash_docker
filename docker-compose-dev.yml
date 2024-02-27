@@ -4,8 +4,8 @@ services:
       file: docker-compose-prod.yml
       service: fsw
     volumes:
-      - ".:/home/brash_user/code"
-    working_dir: /home/brash_user/code/cFS/build/exe/cpu2
+      - ".:/code"
+    working_dir: /code/cFS/build/exe/cpu2
   rosgsw:
     extends:
       file: docker-compose-prod.yml
@@ -17,16 +17,16 @@ services:
       dockerfile: ros-base-Dockerfile
       target: brash-ros-base
     volumes:
-      - ".:/home/brash_user/code"
-    working_dir: /home/brash_user/code/brash
+      - ".:/code"
+    working_dir: /code/brash
   rosfsw:
     extends:
       file: docker-compose-prod.yml
       service: rosfsw
     image: "brash-ros-base"
     volumes:
-      - ".:/home/brash_user/code"
-    working_dir: /home/brash_user/code/brash
+      - ".:/code"
+    working_dir: /code/brash
   novnc:
     extends:
       file: docker-compose-prod.yml
