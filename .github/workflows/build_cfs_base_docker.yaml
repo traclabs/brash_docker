@@ -61,11 +61,11 @@ jobs:
           mkdir src
           vcs import src < https.repos
           
-      # Source setup_dev and call docker-compose build
+      # Call docker compose build
       - name: Source setup_dev and call docker-compose build
         run: |
           shopt -s expand_aliases        
-          docker compose -f docker-compose-dev.yml build
+          env UID=${UID} docker compose -f docker-compose-dev.yml build
                     
       # Build cfs_base
       - name: Build cfs-base
