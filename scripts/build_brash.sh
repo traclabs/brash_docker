@@ -6,7 +6,6 @@ echo ""
 
 COMPOSE_FILE="docker-compose-dev.yml"
 CODE_DIR="/code"
-export UID=$UID
 
 docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/brash rosgsw colcon build --symlink-install
 ret=$?
