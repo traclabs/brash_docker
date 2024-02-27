@@ -72,8 +72,15 @@ jobs:
         run: |
           shopt -s expand_aliases
           echo "Print current pwd"
+          pwd
+          echo "Ls"
           ls -al .
-          source scripts/build_cfe.sh          
+          echo "Docker 1"
+          docker compose -f docker-compose-dev.yml run -w /code/cFS fsw make SIMULATION=native prep
+          echo "Docker 2"
+          docker compose -f docker-compose-dev.yml run -w /code/cFS fsw make
+          echo "Docker 3"
+          docker compose -f docker-compose-dev.yml run -w /code/cFS fsw make install
           echo "Build fsw, should return 0 if good, 1 if failure: $?"
           
           
@@ -81,7 +88,7 @@ jobs:
       - name: Build brash-ros-base
         run: |
           shopt -s expand_aliases
-          source scripts/build_brash.sh
+          docker compose -f docker-compose-dev.yml run -w /code/brash rosgsw colcon build --symlink-install
           echo "Build rosgsw should return 0 if good, 1 if failure: $?"
       
       # Push cfs-base image
