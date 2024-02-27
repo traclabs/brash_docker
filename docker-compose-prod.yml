@@ -14,7 +14,6 @@ services:
       dockerfile: cfs-Dockerfile
       args:
         - UID=${UID:-1000}
-        - GID=${GID:-1000}      
   rosgsw:
     image: "brash-ros"
     command: "./run_rosgsw.sh"
@@ -25,7 +24,6 @@ services:
       dockerfile: ros-base-Dockerfile
       args:
         - UID=${UID:-1000}
-        - GID=${GID:-1000}      
     environment:
       - DISPLAY=novnc:0.0
     networks:
