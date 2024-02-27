@@ -47,7 +47,7 @@ WORKDIR ${CODE_DIR}
 RUN pip3 install cfdp
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
-RUN echo 'source /src/brash/install/local_setup.bash' >> ~/.bashrc
+RUN echo 'source ${CODE_DIR}/brash/install/local_setup.bash' >> ~/.bashrc
 
 # Juicer
 COPY --chown=$USERNAME:$USERNAME juicer ${CODE_DIR}/juicer
