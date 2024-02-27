@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: cfs-Dockerfile
       args:
-        - UID=${UID:-1000}
+        - USER_UID=${UID:-1000}
   rosgsw:
     image: "brash-ros"
     command: "./run_rosgsw.sh"
@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: ros-base-Dockerfile
       args:
-        - UID=${UID:-1000}
+        - USER_UID=${UID:-1000}
     environment:
       - DISPLAY=novnc:0.0
     networks:
