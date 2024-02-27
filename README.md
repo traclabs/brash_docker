@@ -1,3 +1,10 @@
+**Instructions to build the brash docker images**
+https://traclabs-brash.bitbucket.io/brash_docker_build.html
+
+**Run the RoboSim demo using the docker images**
+https://traclabs-brash.bitbucket.io/brash_docker_robo_sim.html
+
+
 **Table of Contents:**
 
 1. [Building the Docker image](#setup)
