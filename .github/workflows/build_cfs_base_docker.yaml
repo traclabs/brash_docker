@@ -72,11 +72,7 @@ jobs:
         run: |
           shopt -s expand_aliases
           echo "Print current pwd"
-          pwd
-          echo "Print docker file"
-          docker compose -f docker-compose-dev.yml config
-          echo "User id:"
-          echo "${UID}"
+          ls -al .
           source scripts/build_cfe.sh          
           echo "Build fsw, should return 0 if good, 1 if failure: $?"
           
