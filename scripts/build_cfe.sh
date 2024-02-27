@@ -14,7 +14,7 @@ docker compose -f ${COMPOSE_FILE} config
 
 echo "Print UID: ${UID}"
 echo "Try to run first compose"
-docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make SIMULATION=native prep
+env UID=${UID} docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make SIMULATION=native prep
 ret=$?
 if [ $ret -ne 0 ]; then
   echo "!! Failed in make SIMULATION step !!"
