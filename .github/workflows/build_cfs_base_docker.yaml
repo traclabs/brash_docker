@@ -65,7 +65,7 @@ jobs:
       - name: Call docker-compose build
         run: |
           shopt -s expand_aliases        
-          env UID=${UID} docker compose -f docker-compose-dev.yml build
+          docker compose -f docker-compose-dev.yml build
                     
       # Build cfs_base
       - name: Build cfs-base
