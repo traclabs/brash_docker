@@ -6,12 +6,6 @@ FROM osrf/ros:humble-desktop AS brash-ros-base
 # Prevent prompts during apt installs
 ARG DEBIAN_FRONTEND=noninteractive 
 
-ARG USERNAME=brash_user
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -s /sbin/nologin -m -c "Brash User" $USERNAME
-
 # Set git credential helper to aide checkout (only prompt user once during installation if not using ssh keys)
 RUN git config --global credential.helper 'cache --timeout=3600'
 
@@ -24,25 +18,40 @@ RUN apt update \
     libdwarf-dev \
     libelf-dev \
     libsqlite3-dev \
+    sqlitebrowser \
     && rm -rf /var/lib/apt/lists/*
+
+# Switch to bash shell
+SHELL ["/bin/bash", "-c"]
+
+
+# Create a brash user
+ENV USERNAME brash_user
+ENV HOME_DIR=/home/${USERNAME}
+ENV CODE_DIR=${HOME_DIR}/code
+
+# Dev container arguments
+ARG UID=1000
+ARG GID=${UID}
+
+# Create new user and home directory
+RUN groupadd --gid ${GID} ${USERNAME} \
+&& useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
+&& echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+&& chmod 0440 /etc/sudoers.d/${USERNAME} \
+
+USER ${USERNAME}
+WORKDIR ${CODE_DIR}
     
 RUN pip3 install cfdp
-# vcstool - standard part of image
-
-USER $USERNAME
 
 RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
 RUN echo 'source /src/brash/install/local_setup.bash' >> ~/.bashrc
 
-# TODO: Build juicer
-# cd /src/juicer; make
+# Juicer
+COPY --chown=$USERNAME:$USERNAME juicer ${CODE_DIR}/juicer
+WORKDIR ${CODE_DIR}/juicer
+RUN make 
 
 
-## Production Build
-FROM brash-ros-base AS brash-ros
-RUN sed -i '$ d' ~/.bashrc   # Delete DEV-only source
-RUN echo 'source /src/brash/install/local_setup.bash' >> ~/.bashrc
-ADD brash /src/brash
-WORKDIR /src/brash
-
-RUN colcon build
+WORKDIR ${CODE_DIR}/brash

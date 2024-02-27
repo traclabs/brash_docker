@@ -3,19 +3,25 @@ FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config sudo && rm -rf /var/lib/apt/lists/*
 
-# Define the username and key variables
+# Switch to bash shell
+SHELL ["/bin/bash", "-c"]
+
+
+# Create a brash user
 ENV USERNAME brash_user
 ENV HOME_DIR=/home/${USERNAME}
 ENV CODE_DIR=${HOME_DIR}/code
 
-# Create a spaceros user
-RUN useradd -m $USERNAME && \
-  echo "$USERNAME:$USERNAME" | chpasswd && \
-  usermod --shell /bin/bash $USERNAME && \
-  usermod -aG sudo $USERNAME && \
-  mkdir -p /etc/sudoers.d && \
-  echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
-  chmod 0440 /etc/sudoers.d/$USERNAME
+# Dev container arguments
+ARG UID=1000
+ARG GID=${UID}
+
+# Create new user and home directory
+RUN groupadd --gid ${GID} ${USERNAME} \
+&& useradd --uid ${GID} --gid ${UID} --create-home ${USERNAME} \
+&& echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+&& chmod 0440 /etc/sudoers.d/${USERNAME} \
+
 
 USER ${USERNAME}
 WORKDIR ${CODE_DIR}
