@@ -1,8 +1,15 @@
+Instructions on how to run the brash docker can be found in our main documentation page: https://traclabs-brash.bitbucket.io/index.html , specifically:
+
 **Instructions to build the brash docker images**
+
 https://traclabs-brash.bitbucket.io/brash_docker_build.html
 
 **Run the RoboSim demo using the docker images**
+
 https://traclabs-brash.bitbucket.io/brash_docker_robo_sim.html
+
+
+The rest of this README is mostly for development purposes, for new users, try the instructions in the traclabs-brash's links mentioned above.
 
 
 **Table of Contents:**
