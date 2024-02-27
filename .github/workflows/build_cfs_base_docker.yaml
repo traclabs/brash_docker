@@ -79,7 +79,7 @@ jobs:
       - name: Build brash-ros-base
         run: |
           shopt -s expand_aliases
-          source scripts.build_brash.sh
+          source scripts/build_brash.sh
           echo "Build rosgsw should return 0 if good, 1 if failure: $?"
       
       # Push cfs-base image
