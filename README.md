@@ -9,7 +9,10 @@ https://traclabs-brash.bitbucket.io/brash_docker_build.html
 https://traclabs-brash.bitbucket.io/brash_docker_robo_sim.html
 
 
-The rest of this README is mostly for development purposes, for new users, try the instructions in the traclabs-brash's links mentioned above.
+The rest of this README is mostly for internal development purposes. So, if you are a  new user, try the instructions in the traclabs-brash's links mentioned above.
+
+
+
 
 
 **Table of Contents:**
