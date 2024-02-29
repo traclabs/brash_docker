@@ -2,6 +2,12 @@
 Running demo for rover
 ======================
 
+1. Build the rover-rosfsw image:
+
+   ```
+   $ cd brash_docker/config/rover_demo
+   $ docker build -f rover_rosfsw.Dockerfile . -t rover-rosfsw --target rover-rosfsw-dev
+   ```
 
 
 1. Build docker (Devel mode)
@@ -47,7 +53,7 @@ docker-compose --project-directory . -f config/rover_demo/docker-compose-dev-rov
 ```
 $ docker exec -it  brash_docker-rosfsw-1  bash
 $ source install/setup.bash
-$ ros2 launch clearpath_gz simulation.launch.py setup_path:=/home/brash_user/rover_ws
+$ ros2 launch clearpath_gz simulation.launch.py setup_path:=/home/traclabs_user/rover_ws
 
 $ # Remember to press PLAY!
 ```
