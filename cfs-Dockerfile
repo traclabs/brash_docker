@@ -3,18 +3,29 @@ FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config sudo && rm -rf /var/lib/apt/lists/*
 
-ARG USERNAME=cfs
+# Switch to bash shell
+SHELL ["/bin/bash", "-c"]
+
+# Create a brash user
+ENV USERNAME brash_user
+ENV HOME_DIR=/home/${USERNAME}
+ENV CODE_DIR=/code
+
+# Dev container arguments
 ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -s /sbin/nologin -m -c "CFS User" $USERNAME
-USER $USERNAME
+ARG USER_GID=${USER_UID}
 
-# Note: ADD/COPY doesn't respect USER directive above, so explicit chown is required
-ADD --chown=$USERNAME:$USERNAME cFS /cFS
-WORKDIR /cFS
+# Create new user and home directory
+RUN groupadd --gid ${USER_GID} ${USERNAME} \
+&& useradd --uid ${USER_UID} --gid ${USER_GID} --create-home ${USERNAME} \
+&& echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+&& chmod 0440 /etc/sudoers.d/${USERNAME} \
+&& mkdir -p ${CODE_DIR} \
+&& chown -R ${USER_UID}:${USER_GID} ${CODE_DIR}
 
-RUN make prep SIMULATION=native && make && make install
+USER ${USERNAME}
+WORKDIR ${CODE_DIR}
 
-WORKDIR /cFS/build/exe/cpu2
+# Dev environment has cFS built on mount volume
+WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
 CMD ./core-cpu2

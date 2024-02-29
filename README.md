@@ -1,3 +1,20 @@
+Instructions on how to run the brash docker can be found in our main documentation page: https://traclabs-brash.bitbucket.io/index.html , specifically:
+
+**Instructions to build the brash docker images**
+
+https://traclabs-brash.bitbucket.io/brash_docker_build.html
+
+**Run the RoboSim demo using the docker images**
+
+https://traclabs-brash.bitbucket.io/brash_docker_robo_sim.html
+
+
+The rest of this README is mostly for internal development purposes. So, if you are a  new user, try the instructions in the traclabs-brash's links mentioned above.
+
+
+
+
+
 **Table of Contents:**
 
 1. [Building the Docker image](#setup)
@@ -38,7 +55,7 @@ Begin with the [**Common Setup**](#common-setup) subsection, then procede to eit
 
 ### Pre-requisites
 
-- **docker-compose** must be available to build and run.  This setup has been tested using docker, but should also work with **podman** with minimal effort.
+- **docker-compose** must be available to build and run (you can install Docker Engine following [these instructions](https://docs.docker.com/engine/install/ubuntu/)).  This setup has been tested using docker, but should also work with **podman** with minimal effort.
 - **git** and **vcstool** are required for source code checkout (`pip3 install vcstool`).
 - All commands should be executed from this folder.
 - Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before

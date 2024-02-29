@@ -12,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: cfs-Dockerfile
+      args:
+        - USER_UID=${UID:-1000}
   rosgsw:
     image: "brash-ros"
     command: "./run_rosgsw.sh"
@@ -20,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: ros-base-Dockerfile
+      args:
+        - USER_UID=${UID:-1000}
     environment:
       - ROS_DOMAIN_ID=2
       - DISPLAY=novnc:0.0

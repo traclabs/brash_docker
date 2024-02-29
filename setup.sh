@@ -7,11 +7,11 @@ export COMPOSE_FILE=docker-compose-prod.yml
 # Define a function for wrapping rosgsw commands (and evaluating bashrc ENV variables first)
 rosgsw_cmd() {
     local CMD=$1
-    docker-compose exec -it -w /shared/brash rosgsw bash -ic "$CMD"
+    docker-compose exec -it -w /code/brash rosgsw bash -ic "$CMD"
 }
 rosgsw_cmd_bg() {
     local CMD=$1
-    docker-compose exec -d -w /shared/brash rosgsw bash -ic "$CMD"
+    docker-compose exec -d -w /code/brash rosgsw bash -ic "$CMD"
 }
 
 # Define the alias using the function
