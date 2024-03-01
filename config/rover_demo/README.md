@@ -2,13 +2,46 @@
 Running demo for rover
 ======================
 
-1. Build the rover-rosfsw image:
+1. Download the code:
+   
+   ```
+   $ cd brash_docker/config/rover_demo
+   $ ./setup.sh
+
+2. Build the cFS dev image
+   ```
+   $ docker compose -f rover_demo_compose_devel.yml build --build-arg="USER_UID=$UID" fsw
+   ```
+
+   
+2. Build the base ros image:
 
    ```
    $ cd brash_docker/config/rover_demo
-   $ docker build -f rover_rosfsw.Dockerfile . -t rover-rosfsw --target rover-rosfsw-dev
+   $ docker build -f brash_ros_base.Dockerfile . --build-arg="USER_UID=$UID" -t brash-ros-base --target brash-ros-base
+   ```
+   
+3. Build the rosgsw and rosfsw images:
+   ```
+   $ docker build -f brash_rosgsw.Dockerfile . --build-arg="USER_UID=$UID" -t brash-rosgsw --target brash-rosgsw
    ```
 
+   ```
+   $ docker build -f brash_rosfsw.Dockerfile . --build-arg="USER_UID=$UID" -t brash-rosfsw --target brash-rosfsw
+   ```
+
+
+
+3. Run the fsw image:
+
+   ```
+   $ docker compose -f rover_demo_compose_devel.yml up fsw
+   ```
+  
+   And you can open a terminal in the container:
+   ```
+   $ docker exec -it  rover_demo-fsw-1  bash
+   ```
 
 1. Build docker (Devel mode)
    --------------------------

@@ -1,13 +1,15 @@
 #!/bin/bash
 
 ROOT_PATH=$PWD
-BRASH_WS="brash_ws"
+CODE_DIR="code"
+CFS_BRANCH="demo/husky_navigation"
 
-download_brash_ws()
+# Download brash and juicer, used for rosgsw/rosfsw and cFS, used by fsw
+download_code()
 {
  pushd $ROOT_PATH
- mkdir $BRASH_WS
- cd $BRASH_WS
+ mkdir $CODE_DIR
+ cd $CODE_DIR
 
  # Download brash
  git clone https://github.com/traclabs/brash
@@ -16,16 +18,27 @@ download_brash_ws()
  vcs import src < brash.repos
  popd
  pushd $ROOT_PATH
- cd $BRASH_WS
+ cd $CODE_DIR
 
  # Download juicer
  git clone https://github.com/WindhoverLabs/juicer.git --recursive 
  cd juicer 
  git checkout archive_unions
+ popd
+ pushd $ROOT_PATH
+ cd $CODE_DIR
 
+ # Download cFS
+ git clone https://github.com/traclabs/cFS.git
+ cd cFS
+ git checkout $CFS_BRANCH
+ git submodule init
+ git submodule update
+ popd
+ pushd $ROOT_PATH
 }
 
 
 # ************************
 # Download everything
-download_brash_ws
+download_code
