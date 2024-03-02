@@ -1,5 +1,5 @@
 
-Running demo for rover
+Build demo for rover
 ======================
 
 1. Download the code:
@@ -10,37 +10,39 @@ Running demo for rover
 
 2. Build the cFS dev image
    ```
-   $ docker compose -f rover_demo_compose_devel.yml build --build-arg="USER_UID=$UID" fsw
+   $ env UID=${UID}  docker compose -f rover_demo_compose_devel.yml build fsw
    ```
 
-   
-2. Build the base ros image:
+3. Build the ros-base image:
 
    ```
    $ cd brash_docker/config/rover_demo
    $ docker build -f brash_ros_base.Dockerfile . --build-arg="USER_UID=$UID" -t brash-ros-base --target brash-ros-base
    ```
    
-3. Build the rosgsw and rosfsw images:
+4. Build the rosgsw and rosfsw images:
    ```
-   $ docker build -f brash_rosgsw.Dockerfile . --build-arg="USER_UID=$UID" -t brash-rosgsw --target brash-rosgsw
-   ```
-
-   ```
-   $ docker build -f brash_rosfsw.Dockerfile . --build-arg="USER_UID=$UID" -t brash-rosfsw --target brash-rosfsw
+   $ env UID=${UID}  docker compose -f rover_demo_compose_devel.yml build rosgsw
+   $ env UID=${UID}  docker compose -f rover_demo_compose_devel.yml build rosfsw
    ```
 
+Run
+====
 
-
-3. Run the fsw image:
+1. Run the 3 dockers. These services just keep the containers running:
 
    ```
    $ docker compose -f rover_demo_compose_devel.yml up fsw
+   $ docker compose -f rover_demo_compose_devel.yml up rosgsw
+   $ docker compose -f rover_demo_compose_devel.yml up rosfsw
+   $ docker compose -f rover_demo_compose_devel.yml up novnc
    ```
   
    And you can open a terminal in the container:
    ```
    $ docker exec -it  rover_demo-fsw-1  bash
+   $ docker exec -it  rover_demo-rosgsw-1  bash
+   $ docker exec -it  rover_demo-rosfsw-1  bash
    ```
 
 1. Build docker (Devel mode)
@@ -103,4 +105,4 @@ $ ros2 topic pub -r 10 /w200_0000/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 
 
 
 
-ros2 topic pub -r 10 /w200_0000/cmd_vel geometry_msgs/msg/Twist "{linear: {x: -0.3, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
+ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: -0.3, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"

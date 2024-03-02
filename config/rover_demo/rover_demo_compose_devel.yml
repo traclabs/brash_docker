@@ -3,7 +3,7 @@ services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
     image: "brash-fsw-dev"
-    command: sleep infinity
+    command: ./core-cpu2
     volumes:
       - ./code/cFS:/code/cFS
     user: brash_user
@@ -20,28 +20,48 @@ services:
       args:
         - USER_UID=${UID:-1000}
 
-#  rosgsw:
-#    image: "brash-rosgsw"
-#    command: tail -f /dev/null
+  rosgsw:
+    image: "brash-rosgsw-dev"
+    command: sleep infinity
+    volumes:
+      - ./code/brash:/code/brash
+      - ./code/cFS:/code/cFS
+      - ./code/juicer:/code/juicer
 #    env_file:
 #      - env.sh
-#    environment:
-#      - ROS_DOMAIN_ID=2
-#      - DISPLAY=novnc:0.0
-#    networks:
-#      spaceip:
-#        ipv4_address: 10.5.0.2
-#  rosfsw:
-#    image: "brash-rosfsw"
-#    command: tail -f /dev/null
+    environment:
+      - ROS_DOMAIN_ID=2
+      - DISPLAY=novnc:0.0
+    networks:
+      spaceip:
+        ipv4_address: 10.5.0.2
+    build:
+      context: .
+      dockerfile: brash_rosgsw.Dockerfile
+      target: brash-rosgsw-dev
+      args:
+        - USER_UID=${UID:-1000}
+        
+  rosfsw:
+    image: "brash-rosfsw-dev"
+    command: sleep infinity
 #    env_file:
 #      - env.sh
-#    environment:
-#      - ROS_DOMAIN_ID=4
-#      - DISPLAY=novnc:0.0
-#    networks:
-#      spaceip:
-#        ipv4_address: 10.5.0.4
+    volumes:
+      - ./code/brash:/code/brash
+    environment:
+      - ROS_DOMAIN_ID=4
+      - DISPLAY=novnc:0.0
+    networks:
+      spaceip:
+        ipv4_address: 10.5.0.4
+    build:
+      context: .
+      dockerfile: brash_rosfsw.Dockerfile
+      target: brash-rosfsw-dev
+      args:
+        - USER_UID=${UID:-1000}
+        
   novnc:
     image: theasp/novnc:latest
     environment:

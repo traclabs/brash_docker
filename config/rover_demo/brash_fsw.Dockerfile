@@ -26,19 +26,8 @@ RUN groupadd --gid ${USER_GID} ${USERNAME} \
 
 USER ${USERNAME}
 
-# Create cFS folder with right permissions
-WORKDIR ${CODE_DIR}
-RUN mkdir -p cFS
-RUN chown -R ${USER_UID}:${USER_GID} cFS
-
-RUN mkdir -p parks
-RUN chown -R ${USER_UID}:${USER_GID} parks
-
-RUN mkdir -p mads
-RUN chown -R ${USER_UID}:${USER_GID} mads
-
-WORKDIR ${CODE_DIR}/mads
-#WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
+# Set workdir
+WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
 
 ##################################################
 # Production

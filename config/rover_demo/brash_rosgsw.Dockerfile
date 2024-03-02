@@ -1,4 +1,4 @@
-FROM brash-ros-base AS brash-rosgsw
+FROM brash-ros-base AS brash-rosgsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG CODE_LOCAL=code
@@ -11,13 +11,25 @@ RUN sudo apt-get install -y \
   ros-humble-srdfdom \
   ros-humble-joint-state-publisher-gui \
   ros-humble-geometric-shapes \
+  ros-humble-rqt-robot-steering \
   ros-humble-rqt* \
   libdwarf-dev \
   libelf-dev \
   libsqlite3-dev \
   sqlitebrowser
 
-WORKDIR ${CODE_DIR}
+# Set up sourcing
+COPY --chown=${USERNAME}:${USERNAME} rosgsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
+RUN echo 'source ${CODE_DIR}/entrypoint.sh' >> ~/.bashrc
+
+# Get ready with brash workspace
+RUN mkdir -p ${CODE_DIR}/brash
+WORKDIR ${CODE_DIR}/brash
+
+##################################################
+# Production
+##################################################
+FROM brash-rosgsw-dev as brash-rosgsw
 
 # Copy brash/juicer
 COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}

@@ -12,7 +12,7 @@ download_code()
  cd $CODE_DIR
 
  # Download brash
- git clone https://github.com/traclabs/brash
+ git clone git@github.com:traclabs/brash
  cd brash
  mkdir src
  vcs import src < brash.repos
@@ -21,7 +21,7 @@ download_code()
  cd $CODE_DIR
 
  # Download juicer
- git clone https://github.com/WindhoverLabs/juicer.git --recursive 
+ git clone git@github.com:WindhoverLabs/juicer.git --recursive 
  cd juicer 
  git checkout archive_unions
  popd
@@ -29,7 +29,7 @@ download_code()
  cd $CODE_DIR
 
  # Download cFS
- git clone https://github.com/traclabs/cFS.git
+ git clone git@github.com:traclabs/cFS.git
  cd cFS
  git checkout $CFS_BRANCH
  git submodule init
