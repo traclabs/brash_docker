@@ -9,12 +9,15 @@ RUN apt-get update \
  && apt -y upgrade 
 
 RUN apt-get install -y \
+  python3-pip \ 
   libnlopt-dev \
   libnlopt-cxx-dev \
   ros-humble-xacro \
   ros-humble-joint-state-publisher \
   ros-humble-srdfdom \
   ros-humble-rqt*
+
+RUN pip3 install cfdp
 
 # Switch to bash shell
 SHELL ["/bin/bash", "-c"]

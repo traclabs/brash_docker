@@ -22,13 +22,13 @@ services:
 
   rosgsw:
     image: "brash-rosgsw-dev"
-    command: sleep infinity
+    command: "./run_rosgsw.sh"
     volumes:
       - ./code/brash:/code/brash
       - ./code/cFS:/code/cFS
       - ./code/juicer:/code/juicer
-#    env_file:
-#      - env.sh
+    env_file:
+      - ../../env.sh
     environment:
       - ROS_DOMAIN_ID=2
       - DISPLAY=novnc:0.0
@@ -44,9 +44,9 @@ services:
         
   rosfsw:
     image: "brash-rosfsw-dev"
-    command: sleep infinity
-#    env_file:
-#      - env.sh
+    command: sleep infinity #"./run_rosfsw.sh"
+    env_file:
+      - ../../env.sh
     volumes:
       - ./code/brash:/code/brash
     environment:
