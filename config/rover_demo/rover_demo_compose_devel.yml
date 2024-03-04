@@ -25,8 +25,8 @@ services:
     command: "./run_rosgsw.sh"
     volumes:
       - ./code/brash:/code/brash
-      - ./code/cFS:/code/cFS
-      - ./code/juicer:/code/juicer
+#      - ./code/cFS:/code/cFS
+#      - ./code/juicer:/code/juicer
     env_file:
       - ../../env.sh
     environment:
@@ -44,7 +44,7 @@ services:
         
   rosfsw:
     image: "brash-rosfsw-dev"
-    command: sleep infinity #"./run_rosfsw.sh"
+    command: "./run_rosfsw.sh"
     env_file:
       - ../../env.sh
     volumes:

@@ -2,7 +2,7 @@ version: "3.8"
 services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
-    image: "cfs-base"
+    image: "cfs-dev"
     command: "./core-cpu2"
     environment:
       - DISPLAY=novnc:0.0
@@ -11,7 +11,8 @@ services:
         ipv4_address: 10.5.0.3
     build:
       context: .
-      dockerfile: cfs-Dockerfile
+      dockerfile: cfs.Dockerfile
+      target: cfs-dev
       args:
         - USER_UID=${UID:-1000}
   rosgsw:

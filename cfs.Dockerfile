@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu AS cfs-dev
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config sudo && rm -rf /var/lib/apt/lists/*
@@ -10,6 +10,7 @@ SHELL ["/bin/bash", "-c"]
 ENV USERNAME brash_user
 ENV HOME_DIR=/home/${USERNAME}
 ENV CODE_DIR=/code
+ENV CFS_LOCAL=code/cFS
 
 # Dev container arguments
 ARG USER_UID=1000
@@ -24,8 +25,24 @@ RUN groupadd --gid ${USER_GID} ${USERNAME} \
 && chown -R ${USER_UID}:${USER_GID} ${CODE_DIR}
 
 USER ${USERNAME}
-WORKDIR ${CODE_DIR}
+
+# Set workdir
+WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
+
+##################################################
+# Production
+##################################################
+FROM cfs-dev as cfs
+
+# Copy cFS
+COPY --chown=${USERNAME}:${USERNAME} ${CFS_LOCAL} ${CODE_DIR}/cFS
+
+# Build cFS
+WORKDIR ${CODE_DIR}/cFS
+RUN make SIMULATION=native prep && \
+ make && \
+ make install
 
 # Dev environment has cFS built on mount volume
 WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
-CMD ./core-cpu2
+

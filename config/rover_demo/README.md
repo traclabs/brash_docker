@@ -33,7 +33,7 @@ Run
 
    ```
    $ docker compose -f rover_demo_compose_devel.yml up fsw
-   $ docker compose -f rover_demo_compose_devel.yml up novnc   
+   $ docker compose -f rover_demo_compose_devel.yml up novnc
    $ docker compose -f rover_demo_compose_devel.yml up rosgsw
    $ docker compose -f rover_demo_compose_devel.yml up rosfsw
    ```
