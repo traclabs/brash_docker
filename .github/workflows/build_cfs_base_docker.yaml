@@ -61,31 +61,26 @@ jobs:
           mkdir src
           vcs import src < https.repos
           
-      # Source setup_dev and call docker-compose build
-      - name: Source setup_dev and call docker-compose build
+      # Call docker compose build with UID explicit
+      - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          source setup_dev.sh
-          
-          docker-compose build
-          
+          env UID=${UID}  docker compose -f docker-compose-dev.yml build
+                    
       # Build cfs_base
       - name: Build cfs-base
         run: |
           shopt -s expand_aliases
-          source setup_dev.sh
+          source scripts/build_cfe.sh
+          echo "Build fsw, should return 0 if good, 1 if failure: $?"
           
-          build_cfe prep SIMULATION=native
-          build_cfe install          
-
+          
       # Build brash-ros-base
       - name: Build brash-ros-base
         run: |
           shopt -s expand_aliases
-          source setup_dev.sh
-          
-          build_ros          
-
+          source scripts/build_brash.sh
+          echo "Build rosgsw should return 0 if good, 1 if failure: $?"
       
       # Push cfs-base image
       # (not using build-and-push action as passing images is giving me trouble)

@@ -1,3 +1,20 @@
+Instructions on how to run the brash docker can be found in our main documentation page: https://traclabs-brash.bitbucket.io/index.html , specifically:
+
+**Instructions to build the brash docker images**
+
+https://traclabs-brash.bitbucket.io/brash_docker_build.html
+
+**Run the RoboSim demo using the docker images**
+
+https://traclabs-brash.bitbucket.io/brash_docker_robo_sim.html
+
+
+The rest of this README is mostly for internal development purposes. So, if you are a  new user, try the instructions in the traclabs-brash's links mentioned above.
+
+
+
+
+
 **Table of Contents:**
 
 1. [Building the Docker image](#setup)
@@ -9,6 +26,8 @@
 
 # Docker Test Environment
 
+This is a containerized environment to quickly get started with the brash system, in 'development' or 'production' configurations.  The containers have been tested with both Docker and Podman.
+
 NOTE: Static IP addresses are required because cFE does not support DNS lookup and requires IP address to be pre-compiled in the SBN configuration table.  To use dynamic IPs, we would need to re-compile the cfe tables on each startup of the system.  
 
 At present, all network configurations are split between 3 locations (plus compiled-in defaults)
@@ -16,13 +35,14 @@ At present, all network configurations are split between 3 locations (plus compi
 - env.sh
 - cFS/sample_defs/tables/*sbn_conf_tbl.c  # Docker configuration uses cpu2 setup
 
-## ARM Based Machines
+## ARM Based Machines (ie: Mac M*)
 
 This applies to hosts such as Apple M* processors, Pis, etc.
 
 An ARM-based image may be required for proper functionality (and improved performance). The official ROS Docker image does not include an ARM-based build.
 
 Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
+
 
 # Setup
 Begin with the [**Common Setup**](#common-setup) subsection, then procede to either the [Dev](#dev) or [Prod](#prod) section.
@@ -35,7 +55,7 @@ Begin with the [**Common Setup**](#common-setup) subsection, then procede to eit
 
 ### Pre-requisites
 
-- **docker-compose** must be available to build and run.  This setup has been tested using docker, but should also work with **podman** with minimal effort.
+- **docker-compose** must be available to build and run (you can install Docker Engine following [these instructions](https://docs.docker.com/engine/install/ubuntu/)).  This setup has been tested using docker, but should also work with **podman** with minimal effort.
 - **git** and **vcstool** are required for source code checkout (`pip3 install vcstool`).
 - All commands should be executed from this folder.
 - Ensure network connectivity is available. If running behind a proxy, ensure that any related settings or certificates have been setup.  In some cases, this may require tweaking the Dockerfiles before
@@ -140,3 +160,17 @@ To open a shell for issuing multiple ROS service commands on the rosgsw instance
 
 For debugging, network activity can be monitored with tshark. The pcap file can be opened in a local Wireshark instance for easier viewing.
 - `docker-compose exec -w /shared -it fsw tshark -w test.pcap -f udp`
+
+# Troubleshooting
+
+## cFS Mqueue errors
+
+The provided cfs-Dockerfile has been configured to run as a non-root user in order to suppress internal checks that will otherwise prevent cfe from starting up with an errour concerning maximum number of message queues. In this configuration cfe will run, but may drop messages in some circumstances.
+
+Another  approach is to alter `docker-compose-prod.yml` to add `privileged: true` to the `fsw` image definition.
+
+This can also be resolved (for Linux systems) by directly increasing the limit with:
+
+   `echo 128 | sudo tee /proc/sys/fs/mqueue/msg_max`
+   
+On Mac systems, the above command needs to be executed from within the VM hosting the daemon.  If using podman, this can be accessed with `podman machine ssh`.  If using [colima](https://github.com/abiosoft/colima) for Docker, connect with `colima ssh`. 

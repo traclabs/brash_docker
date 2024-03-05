@@ -1,11 +1,9 @@
-version: "3.0"
+version: "3.8"
 services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
     image: "cfs-base"
     command: "./core-cpu2"
-    # privileged is needed to avoid issues with mqueues. Running as non-root user may be an alternative
-    privileged: true
     environment:
       - DISPLAY=novnc:0.0
     networks:
@@ -14,6 +12,8 @@ services:
     build:
       context: .
       dockerfile: cfs-Dockerfile
+      args:
+        - USER_UID=${UID:-1000}
   rosgsw:
     image: "brash-ros"
     command: "./run_rosgsw.sh"
@@ -22,6 +22,8 @@ services:
     build:
       context: .
       dockerfile: ros-base-Dockerfile
+      args:
+        - USER_UID=${UID:-1000}
     environment:
       - ROS_DOMAIN_ID=2
       - DISPLAY=novnc:0.0
