@@ -1,4 +1,4 @@
-FROM brash-ros-base AS brash-rosgsw-dev
+FROM ros-base AS rosgsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
 ARG CODE_LOCAL=code
@@ -19,7 +19,7 @@ RUN sudo apt-get install -y \
   sqlitebrowser
 
 # Set up sourcing
-COPY --chown=${USERNAME}:${USERNAME} rosgsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
+COPY --chown=${USERNAME}:${USERNAME} config/rosgsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
 RUN echo 'source ${CODE_DIR}/entrypoint.sh' >> ~/.bashrc
 
 # Get ready with brash workspace
@@ -29,7 +29,7 @@ WORKDIR ${CODE_DIR}/brash
 ##################################################
 # Production
 ##################################################
-FROM brash-rosgsw-dev as brash-rosgsw
+FROM rosgsw-dev as rosgsw
 
 # Copy brash/juicer
 COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}

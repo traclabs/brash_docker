@@ -10,12 +10,12 @@ services:
     extends:
       file: docker-compose-prod.yml
       service: rosgsw
-    image: "brash-ros-base"
+    image: "rosgsw-dev"
     build:
       # NOTE: Actual build process must be executed discretely for dev mounts
       context: .
-      dockerfile: ros-base-Dockerfile
-      target: brash-ros-base
+      dockerfile: rosgsw.Dockerfile
+      target: rosgsw-dev
     volumes:
       - ".:/code"
     working_dir: /code/brash
@@ -23,7 +23,11 @@ services:
     extends:
       file: docker-compose-prod.yml
       service: rosfsw
-    image: "brash-ros-base"
+    image: "rosfsw-dev"
+    build:
+      context: .
+      dockerfile: rosfsw.Dockerfile
+      target: rosfsw-dev
     volumes:
       - ".:/code"
     working_dir: /code/brash
@@ -31,6 +35,10 @@ services:
     extends:
       file: docker-compose-prod.yml
       service: novnc
+  ros_base:
+    extends:
+      file: docker-compose-prod.yml
+      service: ros_base
 # NOTE: networks apparently can't be imported from related file?
 networks:
   spaceip:

@@ -1,4 +1,4 @@
-FROM osrf/ros:humble-desktop AS brash-ros-base
+FROM osrf/ros:humble-desktop AS ros-base
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \

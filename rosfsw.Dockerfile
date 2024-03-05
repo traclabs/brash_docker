@@ -1,4 +1,4 @@
-FROM brash-rosgsw-dev AS brash-rosfsw-dev
+FROM rosgsw-dev AS rosfsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN sudo apt-get install -y \
@@ -9,7 +9,6 @@ RUN sudo apt-get install -y \
   ros-humble-controller-manager \
   ros-humble-joint-trajectory-controller \
   ros-humble-rqt* \
-  
   ignition-fortress \
   ros-humble-ros-gz-sim \
   ros-humble-ros-gz-bridge \
@@ -28,8 +27,8 @@ RUN mkdir -p ${CODE_DIR}/rover_ws
 WORKDIR ${CODE_DIR}/rover_ws
 
 # Copy rover repos and robot config file required
-COPY --chown=${USERNAME}:${USERNAME} ./rover.repos rover.repos
-COPY --chown=${USERNAME}:${USERNAME} ./robot.yaml robot.yaml
+COPY --chown=${USERNAME}:${USERNAME} ./config/rover.repos rover.repos
+COPY --chown=${USERNAME}:${USERNAME} ./config/robot.yaml robot.yaml
 RUN mkdir src && vcs import src < rover.repos 
 
 # Build the rover workspace
@@ -37,7 +36,7 @@ RUN source /opt/ros/humble/setup.bash &&  \
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # Set up sourcing
-COPY --chown=${USERNAME}:${USERNAME} rosfsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
+COPY --chown=${USERNAME}:${USERNAME} ./config/rosfsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
 RUN echo 'source ${CODE_DIR}/entrypoint.sh' >> ~/.bashrc
 
 
@@ -47,7 +46,7 @@ WORKDIR ${CODE_DIR}/brash
 ##################################################
 # Production
 ##################################################
-FROM brash-rosfsw-dev as brash-rosfsw
+FROM rosfsw-dev as rosfsw
 
 # Copy brash/juicer
 COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}
