@@ -65,7 +65,8 @@ jobs:
       - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          env UID=${UID}  docker compose -f docker-compose-dev.yml build
+          source script/build_images.sh
+          echo "Built base images, return 0 if good, 1 if failure: $?"
                     
       # Build cfs_base
       - name: Build cfs-base
@@ -86,16 +87,25 @@ jobs:
       # (not using build-and-push action as passing images is giving me trouble)
       - name: Push cfs-base
         run: |
-          local_tag="cfs-base"
+          local_tag="cfs-dev"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
       
-      # Push brash-ros-base image
+      # Push rosgsw-dev image
       # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push brash-ros-base
+      - name: Push rosgsw-dev
         run: |
-          local_tag="brash-ros-base"
+          local_tag="rosgsw-dev"
+          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
+          docker tag $local_tag $remote_tag
+          docker push $remote_tag
+
+      # Push rosfsw-dev image
+      # (not using build-and-push action as passing images is giving me trouble)
+      - name: Push rosfsw-dev
+        run: |
+          local_tag="rosfsw-dev"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
