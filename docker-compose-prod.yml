@@ -2,7 +2,7 @@ version: "3.8"
 services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
-    image: "cfs-base"
+    image: "cfs-dev"
     command: "./core-cpu2"
     environment:
       - DISPLAY=novnc:0.0
@@ -11,17 +11,19 @@ services:
         ipv4_address: 10.5.0.3
     build:
       context: .
-      dockerfile: cfs-Dockerfile
+      dockerfile: cfs.Dockerfile
+      target: cfs-dev
       args:
         - USER_UID=${UID:-1000}
   rosgsw:
-    image: "brash-ros"
+    image: "rosgsw-dev"
     command: "./run_rosgsw.sh"
     env_file:
       - env.sh
     build:
       context: .
-      dockerfile: ros-base-Dockerfile
+      dockerfile: rosgsw.Dockerfile
+      target: rosgsw-dev
       args:
         - USER_UID=${UID:-1000}
     environment:
@@ -31,7 +33,7 @@ services:
       spaceip:
         ipv4_address: 10.5.0.2
   rosfsw:
-    image: "brash-ros"
+    image: "rosfsw-dev"
     command: "./run_rosfsw.sh"
     env_file:
       - env.sh
@@ -53,6 +55,15 @@ services:
     networks:
       spaceip:
         ipv4_address: 10.5.0.5
+        
+  ros_base:
+    image: "ros-base"
+    build:
+      context: .
+      dockerfile: ros_base.Dockerfile
+      target: ros-base
+      args:
+        - USER_UID=${UID:-1000}      
 
 networks:
   spaceip:
