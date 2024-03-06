@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo ""
-echo "##### Building base images (needs to be in order for image dependencies) #####"
+echo "##### Building base images #####"
 echo ""
 COMPOSE_FILE="docker-compose-dev.yml"
 
