@@ -58,7 +58,7 @@ jobs:
           
       # Start services and test in rosgsw
       - name: Tag images
-        uses: adambirds/docker-compose-action@v1.3.0
+        uses: isbang/compose-action@v1.5.1
         with:
           compose-file: "./docker-compose-prod.yml"
           down-flags: "--volumes"
