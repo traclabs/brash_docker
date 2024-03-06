@@ -57,17 +57,15 @@ jobs:
           docker image tag ghcr.io/traclabs/brash_docker:rosfsw rosfsw:latest          
           
       # Start services and test in rosgsw
-      - uses: actions/checkout@v3
-      - uses: adambirds/docker-compose-action@v1.3.0
-        with:
-          compose-file: "./docker-compose-prod.yml"
-          down-flags: "--volumes"
-          services: |
-            cfs
-            rosgsw
-            rosfsw
-          test-container: rosgsw
-          test-command: "colcon test  --event-handlers console_cohesion+ --ctest-args " -VVV" --return-code-on-test-failure --packages-select cfe_plugin"
+      - name: Start services
+        run: | 
+          docker compose -f docker-compose-prod.yml up -d
+      - name: Test gsw
+        run: |
+          docker exec -i brash_docker-rosgsw-1 bash < ./scripts/tests/test_rosgsw.sh
+      - name: Test fsw
+        run: |
+          docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
           
       
     

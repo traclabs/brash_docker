@@ -19,7 +19,8 @@ RUN apt-get install -y \
   ros-humble-xacro \
   ros-humble-joint-state-publisher \
   ros-humble-srdfdom \
-  ros-humble-rqt*
+  ros-humble-rqt* \
+  ros-humble-ament-cmake-test 
 
 RUN pip3 install cfdp
 
