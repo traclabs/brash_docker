@@ -32,7 +32,7 @@ WORKDIR ${CODE_DIR}/cFS/build/exe/cpu2
 ##################################################
 # Production
 ##################################################
-FROM cfs-dev as cfs
+FROM cfs-dev AS cfs
 
 # Copy cFS
 COPY --chown=${USERNAME}:${USERNAME} ${CFS_LOCAL} ${CODE_DIR}/cFS

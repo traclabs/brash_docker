@@ -1,8 +1,6 @@
 FROM ros-base AS rosgsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG CODE_LOCAL=code
-
 RUN sudo apt-get install -y \
   libnlopt-dev \
   libnlopt-cxx-dev \
@@ -29,10 +27,10 @@ WORKDIR ${CODE_DIR}/brash
 ##################################################
 # Production
 ##################################################
-FROM rosgsw-dev as rosgsw
+FROM rosgsw-dev AS rosgsw
 
-# Copy brash/juicer
-COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}
+# Copy brash=
+COPY --chown=${USERNAME}:${USERNAME} brash ${CODE_DIR}/brash
 
 # Build the brash workspace
 WORKDIR ${CODE_DIR}/brash
@@ -40,8 +38,9 @@ RUN source /opt/ros/humble/setup.bash &&  \
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # Build juicer
-WORKDIR ${CODE_DIR}/juicer
-RUN  make
+#COPY --chown=${USERNAME}:${USERNAME} juicer ${CODE_DIR}/juicer
+#WORKDIR ${CODE_DIR}/juicer
+#RUN  make
 
 # Set workspace
 WORKDIR ${CODE_DIR}/brash

@@ -20,35 +20,35 @@ services:
     command: "./run_rosgsw.sh"
     env_file:
       - env.sh
-    build:
-      context: .
-      dockerfile: rosgsw.Dockerfile
-      target: rosgsw
-      args:
-        - USER_UID=${UID:-1000}
     environment:
       - ROS_DOMAIN_ID=2
       - DISPLAY=novnc:0.0
     networks:
       spaceip:
         ipv4_address: 10.5.0.2
+    build:
+      context: .
+      dockerfile: rosgsw.Dockerfile
+      target: rosgsw
+      args:
+        - USER_UID=${UID:-1000}
   rosfsw:
     image: "rosfsw"
     command: "./run_rosfsw.sh"
     env_file:
       - env.sh
-    build:
-      context: .
-      dockerfile: rosfsw.Dockerfile
-      target: rosfsw
-      args:
-        - USER_UID=${UID:-1000}
     environment:
       - ROS_DOMAIN_ID=4
       - DISPLAY=novnc:0.0
     networks:
       spaceip:
         ipv4_address: 10.5.0.4
+    build:
+      context: .
+      dockerfile: rosfsw.Dockerfile
+      target: rosfsw
+      args:
+        - USER_UID=${UID:-1000}
   novnc:
     image: theasp/novnc:latest
     environment:
