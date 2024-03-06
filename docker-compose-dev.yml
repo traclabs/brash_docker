@@ -3,6 +3,11 @@ services:
     extends:
       file: docker-compose-prod.yml
       service: fsw
+    image: "cfs-dev"
+    build:
+      context: .
+      dockerfile: cfs.Dockerfile
+      target: "cfs-dev"
     volumes:
       - "./cFS:/code/cFS"
     working_dir: /code/cFS/build/exe/cpu2

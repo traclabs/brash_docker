@@ -53,7 +53,7 @@ COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}
 
 # Build the brash workspace
 WORKDIR ${CODE_DIR}/brash
-RUN source /opt/ros/humble/setup.bash &&  \
+RUN source ${CODE_DIR}/rover_ws/install/setup.bash && \
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # Build juicer

@@ -10,7 +10,7 @@ SHELL ["/bin/bash", "-c"]
 ENV USERNAME brash_user
 ENV HOME_DIR=/home/${USERNAME}
 ENV CODE_DIR=/code
-ENV CFS_LOCAL=code/cFS
+ENV CFS_LOCAL=cFS
 
 # Dev container arguments
 ARG USER_UID=1000
