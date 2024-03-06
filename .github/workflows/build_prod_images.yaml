@@ -1,4 +1,4 @@
-name: Create cfs-dev, rosgsw-dev and rosfsw-dev docker images
+name: Building production images (we are still testing these, so use at your own risk)
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ env:
       
 jobs:
 
-  build_brash_noetic:
+  build_brash:
   
     runs-on: ubuntu-20.04
     permissions:
@@ -67,47 +67,32 @@ jobs:
       - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          source scripts/build_images.sh
+          source scripts/build_images.sh -c docker-compose-prod.yml
           echo "Built base images, return 0 if good, 1 if failure: $?"
-                    
-      # Build cfs workspace
-      - name: Build cfs workspace
-        run: |
-          shopt -s expand_aliases
-          source scripts/build_cfe.sh
-          echo "Build fsw, should return 0 if good, 1 if failure: $?"
-          
-          
-      # Build brash workspace
-      - name: Build brash workspace
-        run: |
-          shopt -s expand_aliases
-          source scripts/build_brash.sh
-          echo "Build rosgsw should return 0 if good, 1 if failure: $?"
       
-      # Push cfs-dev image
+      # Push cfs image
       # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push cfs-base
+      - name: Push cfs
         run: |
-          local_tag="cfs-dev"
+          local_tag="cfs"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
       
-      # Push rosgsw-dev image
+      # Push rosgsw image
       # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push rosgsw-dev
+      - name: Push rosgsw
         run: |
-          local_tag="rosgsw-dev"
+          local_tag="rosgsw"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
 
-      # Push rosfsw-dev image
+      # Push rosfsw image
       # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push rosfsw-dev
+      - name: Push rosfsw
         run: |
-          local_tag="rosfsw-dev"
+          local_tag="rosfsw"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
