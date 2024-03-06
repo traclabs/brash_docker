@@ -46,19 +46,20 @@ WORKDIR ${CODE_DIR}/brash
 ##################################################
 # Production
 ##################################################
-FROM rosfsw-dev as rosfsw
+FROM rosfsw-dev AS rosfsw
 
-# Copy brash/juicer
-COPY --chown=${USERNAME}:${USERNAME} ${CODE_LOCAL} ${CODE_DIR}
+# Copy brash
+COPY --chown=${USERNAME}:${USERNAME} brash ${CODE_DIR}/brash
 
 # Build the brash workspace
 WORKDIR ${CODE_DIR}/brash
-RUN source /opt/ros/humble/setup.bash &&  \
+RUN source ${CODE_DIR}/rover_ws/install/setup.bash && \
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # Build juicer
-WORKDIR ${CODE_DIR}/juicer
-RUN  make
+#COPY --chown=${USERNAME}:${USERNAME} juicer ${CODE_DIR}/juicer
+#WORKDIR ${CODE_DIR}/juicer
+#RUN  make
 
 # Set workspace
 WORKDIR ${CODE_DIR}/brash
