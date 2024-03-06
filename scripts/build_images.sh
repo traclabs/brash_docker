@@ -15,9 +15,6 @@ if [ $ret -ne 0 ]; then
   return 1  
 fi
 
-echo "Check images up to fsw"
-docker image ls
-
 echo ""
 echo "##### Building ros_base #####"
 echo ""
@@ -28,9 +25,6 @@ if [ $ret -ne 0 ]; then
   return 1  
 fi
 
-echo "Check images up to ros base"
-docker image ls
-
 echo ""
 echo "##### Building rosgsw #####"
 echo ""
@@ -40,9 +34,6 @@ if [ $ret -ne 0 ]; then
   echo "!! Failed in building base image for rosgsw !!"
   return 1  
 fi
-
-echo "Check images up to rosgsw"
-docker image ls
 
 echo ""
 echo "##### Building rosfsw #####"
