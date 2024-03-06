@@ -30,6 +30,8 @@ jobs:
       # Set up docker buildx (latest build magic)       
       - name: Set up docker buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker # Default is docker-container
 
       # Log in to Docker registry
       - name: Log into registry ${{env.REGISTRY}}
