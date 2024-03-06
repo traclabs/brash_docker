@@ -1,0 +1,86 @@
+name: Simple test of cfe_ros2 bridge connection
+
+on:
+  workflow_dispatch:
+   # Push
+  pull_request:
+    branches:
+      - devel
+      
+env: 
+  # Use docker.io for DockerHub if empty
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+        
+      
+jobs:
+
+  build_brash:
+  
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write      
+    steps:
+      # Checkout this repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up docker buildx (latest build magic)       
+      - name: Set up docker buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker # Default is docker-container
+
+      # Log in to Docker registry
+      - name: Log into registry ${{env.REGISTRY}}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{env.REGISTRY}}
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      # Pull the images cfs, rosgsw and rosfsw
+      - name: Pull images
+        run: |
+          docker pull ghcr.io/traclabs/brash_docker:cfs
+          docker pull ghcr.io/traclabs/brash_docker:rosgsw
+          docker pull ghcr.io/traclabs/brash_docker:rosfsw
+          
+      # Rename them so we can use them with our existing docker-compose files
+      - name: Tag images
+        run: |
+          docker image tag ghcr.io/traclabs/brash_docker:cfs cfs:latest
+          docker image tag ghcr.io/traclabs/brash_docker:rosgsw rosgsw:latest
+          docker image tag ghcr.io/traclabs/brash_docker:rosfsw rosfsw:latest          
+          
+      # Start services and test in rosgsw
+      - name: Start services
+        run: | 
+          docker compose -f docker-compose-prod.yml up -d
+      - name: Test rosgsw
+        run: |
+          docker exec -i brash_docker-rosgsw-1 bash < ./scripts/tests/test_rosgsw.sh
+      - name: Test rosfsw
+        run: |
+          docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
+#      # Double-checking the tests: Let's kill fsw service and see if the tests fail, as they should
+      - name: Down fsw service
+        run: docker compose -f docker-compose-prod.yml down fsw
+#      - name: Sleep for 5 seconds
+#        run: sleep 5
+#      - name: Test rosgsw again, should fail
+#        run: |
+#          docker exec -i brash_docker-rosgsw-1 bash < ./scripts/tests/test_rosgsw.sh
+#      - name: Test rosfsw again, should fail
+#        run: |
+#          docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
+      - name: Down all the rest of services
+        run: |
+          docker compose -f docker-compose-prod.yml down rosgsw
+          docker compose -f docker-compose-prod.yml down rosfsw
+            
+      
+    
