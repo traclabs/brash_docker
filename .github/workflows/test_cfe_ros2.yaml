@@ -55,7 +55,6 @@ jobs:
           docker image tag ghcr.io/traclabs/brash_docker:cfs cfs:latest
           docker image tag ghcr.io/traclabs/brash_docker:rosgsw rosgsw:latest
           docker image tag ghcr.io/traclabs/brash_docker:rosfsw rosfsw:latest          
-      
           
       # Start services and test in rosgsw
       - name: Start services
