@@ -5,6 +5,14 @@ echo "##### Building base images (needs to be in order for image dependencies) #
 echo ""
 COMPOSE_FILE="docker-compose-dev.yml"
 
+while getopts 'c:' opt ; do
+  case "$opt" in 
+  c) COMPOSE_FILE=$OPTARG ;; 
+  esac 
+done 
+
+echo "...Using COMPOSE_FILE: ${COMPOSE_FILE}..."
+
 echo ""
 echo "##### Building fsw #####"
 echo ""
