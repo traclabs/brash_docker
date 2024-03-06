@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo ""
-echo "##### Building base images (needs to be in order for image dependencies) #####"
+echo "##### Building base images #####"
 echo ""
 COMPOSE_FILE="docker-compose-dev.yml"
 
@@ -14,45 +14,14 @@ done
 echo "...Using COMPOSE_FILE: ${COMPOSE_FILE}..."
 
 echo ""
-echo "##### Building fsw #####"
+echo "##### Building fsw, rosgsw and rosfsw #####"
 echo ""
-env UID=${UID} docker compose -f ${COMPOSE_FILE} build fsw
+env UID=${UID} docker compose -f ${COMPOSE_FILE} build
 ret=$?
 if [ $ret -ne 0 ]; then
-  echo "!! Failed in building base image for fsw service !!"
+  echo "!! Failed in building base image for fsw, rosgsw and rosfsw services !!"
   return 1  
 fi
-
-echo ""
-echo "##### Building ros_base #####"
-echo ""
-env UID=${UID} docker compose -f ${COMPOSE_FILE} build ros_base
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "!! Failed in building base image for ros_base (base for rosgsw and rosfsw) !!"
-  return 1  
-fi
-
-echo ""
-echo "##### Building rosgsw #####"
-echo ""
-env UID=${UID} docker compose -f ${COMPOSE_FILE} build rosgsw
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "!! Failed in building base image for rosgsw !!"
-  return 1  
-fi
-
-echo ""
-echo "##### Building rosfsw #####"
-echo ""
-env UID=${UID} docker compose -f ${COMPOSE_FILE} build rosfsw
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "!! Failed in building base image for rosfsw !!"
-  return 1  
-fi
-
 
 echo ""
 echo "##### Done! #####"
