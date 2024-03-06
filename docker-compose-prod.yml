@@ -28,7 +28,7 @@ services:
         ipv4_address: 10.5.0.2
     build:
       context: .
-      dockerfile: rosgsw.Dockerfile
+      dockerfile: brash.Dockerfile
       target: rosgsw
       args:
         - USER_UID=${UID:-1000}
@@ -45,7 +45,7 @@ services:
         ipv4_address: 10.5.0.4
     build:
       context: .
-      dockerfile: rosfsw.Dockerfile
+      dockerfile: brash.Dockerfile
       target: rosfsw
       args:
         - USER_UID=${UID:-1000}
@@ -62,15 +62,6 @@ services:
       spaceip:
         ipv4_address: 10.5.0.5
         
-  ros_base:
-    image: "ros-base"
-    build:
-      context: .
-      dockerfile: ros_base.Dockerfile
-      target: ros-base
-      args:
-        - USER_UID=${UID:-1000}      
-
 networks:
   spaceip:
     driver: bridge
