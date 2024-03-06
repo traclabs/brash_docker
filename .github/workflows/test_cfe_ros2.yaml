@@ -57,8 +57,8 @@ jobs:
           docker image tag ghcr.io/traclabs/brash_docker:rosfsw rosfsw:latest          
           
       # Start services and test in rosgsw
-      - name: Tag images
-        uses: isbang/compose-action@v1.5.1
+      - uses: actions/checkout@v3
+      - uses: adambirds/docker-compose-action@v1.3.0
         with:
           compose-file: "./docker-compose-prod.yml"
           down-flags: "--volumes"
