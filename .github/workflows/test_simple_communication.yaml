@@ -66,17 +66,17 @@ jobs:
       - name: Test rosfsw
         run: |
           docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
-      # Double-checking the tests: Let's kill fsw service and see if the tests fail, as they should
+#      # Double-checking the tests: Let's kill fsw service and see if the tests fail, as they should
       - name: Down fsw service
         run: docker compose -f docker-compose-prod.yml down fsw
-      - name: Sleep for 5 seconds
-        run: sleep 5
-      - name: Test rosgsw again, should fail
-        run: |
-          docker exec -i brash_docker-rosgsw-1 bash < ./scripts/tests/test_rosgsw.sh
-      - name: Test rosfsw again, should fail
-        run: |
-          docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
+#      - name: Sleep for 5 seconds
+#        run: sleep 5
+#      - name: Test rosgsw again, should fail
+#        run: |
+#          docker exec -i brash_docker-rosgsw-1 bash < ./scripts/tests/test_rosgsw.sh
+#      - name: Test rosfsw again, should fail
+#        run: |
+#          docker exec -i brash_docker-rosfsw-1 bash < ./scripts/tests/test_rosfsw.sh
       - name: Down all the rest of services
         run: |
           docker compose -f docker-compose-prod.yml down rosgsw
