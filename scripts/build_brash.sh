@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 
 echo ""
 echo "##### Building brash #####"
@@ -16,4 +16,4 @@ fi
   
 echo ""
 echo "##### Done! #####"
-return 0
+
