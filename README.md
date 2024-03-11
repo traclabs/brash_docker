@@ -41,7 +41,7 @@ This applies to hosts such as Apple M* processors, Pis, etc.
 
 An ARM-based image may be required for proper functionality (and improved performance). The official ROS Docker image does not include an ARM-based build.
 
-Edit the ros-base-Dockerfile and change the image to `arm64v8/ros:galactic`
+Edit the ros-base-Dockerfile and change the base image to `FROM arm64v8/ros:galactic AS ros-base`
 
 
 # Setup
