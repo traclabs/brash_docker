@@ -114,8 +114,11 @@ WORKDIR ${CODE_DIR}/rover_ws
 
 # Copy rover repos and robot config file required
 COPY --chown=${USERNAME}:${USERNAME} ./config/rover.repos rover.repos
-COPY --chown=${USERNAME}:${USERNAME} ./config/robot.yaml robot.yaml
 RUN mkdir src && vcs import src < rover.repos 
+
+# Copy the sample rover yaml to top workspace
+# https://docs.clearpathrobotics.com/docs/ros/tutorials/simulator/install/
+RUN cp src/clearpath_config/clearpath_config/sample/w200/w200_default.yaml robot.yaml
 
 # Build the rover workspace
 RUN source /opt/ros/humble/setup.bash &&  \
@@ -123,7 +126,9 @@ RUN source /opt/ros/humble/setup.bash &&  \
 
 # Set up sourcing
 COPY --chown=${USERNAME}:${USERNAME} ./config/rosfsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
-RUN echo 'source ${CODE_DIR}/entrypoint.sh' >> ~/.bashrc
+
+# Not needed, line in bashrc was added in building of rosgsw-dev
+#RUN echo 'source ${CODE_DIR}/entrypoint.sh' >> ~/.bashrc
 
 
 # Source from rover_ws
