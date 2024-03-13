@@ -115,7 +115,7 @@ RUN mkdir src && vcs import src < rover.repos
 
 # Copy the sample rover yaml to top workspace
 # https://docs.clearpathrobotics.com/docs/ros/tutorials/simulator/install/
-cp src/clearpath_config/clearpath_config/sample/w200/w200_default.yaml robot.yaml
+RUN cp src/clearpath_config/clearpath_config/sample/w200/w200_default.yaml robot.yaml
 
 # Build the rover workspace
 RUN source /opt/ros/humble/setup.bash &&  \
