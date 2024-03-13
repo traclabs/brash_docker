@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 
 echo ""
 echo "##### Building cfe #####"
@@ -29,4 +29,4 @@ fi
 
 echo ""
 echo "##### Done! #####"
-return 0
+

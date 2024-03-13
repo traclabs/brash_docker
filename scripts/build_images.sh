@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 
 echo ""
 echo "##### Building base images #####"
@@ -25,4 +25,4 @@ fi
 
 echo ""
 echo "##### Done! #####"
-return 0
+

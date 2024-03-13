@@ -12,10 +12,12 @@ RUN apt-get update \
  && apt update \ 
  && apt -y upgrade 
 
+# Note: ros-humble-desktop is needed for ARM base image, but is already available for nominal -desktop image
 RUN apt-get install -y \
   python3-pip \ 
   libnlopt-dev \
   libnlopt-cxx-dev \
+  ros-humble-desktop \
   ros-humble-xacro \
   ros-humble-joint-state-publisher \
   ros-humble-srdfdom \
@@ -102,7 +104,8 @@ RUN sudo apt-get install -y \
   ros-humble-imu-tools \
   ros-humble-ign-ros2-control \
   ros-humble-joint-state-broadcaster \
-  ros-humble-diff-drive-controller 
+  ros-humble-diff-drive-controller \
+  ros-humble-clearpath-gz
 
 # Build a rover_ws into container
 WORKDIR ${CODE_DIR}
