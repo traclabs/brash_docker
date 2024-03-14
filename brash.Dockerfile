@@ -10,19 +10,19 @@ RUN apt-get update \
  && apt-get install -y software-properties-common \
  && add-apt-repository -y ppa:kisak/kisak-mesa \ 
  && apt update \ 
- && apt -y upgrade 
-
-# Note: ros-humble-desktop is needed for ARM base image, but is already available for nominal -desktop image
-RUN apt-get install -y \
+ && apt -y upgrade \
+ && apt-get install -y \
   python3-pip \ 
   libnlopt-dev \
   libnlopt-cxx-dev \
+# Note: ros-humble-desktop is needed for ARM base image, but is already available for nominal -desktop image
   ros-humble-desktop \
   ros-humble-xacro \
   ros-humble-joint-state-publisher \
   ros-humble-srdfdom \
   ros-humble-rqt* \
-  ros-humble-ament-cmake-test 
+  ros-humble-ament-cmake-test \
+ && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install cfdp
 
@@ -56,7 +56,7 @@ WORKDIR ${CODE_DIR}
 FROM ros-base AS rosgsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN sudo apt-get install -y \
+RUN sudo apt-get update && sudo apt-get install -y \
   libnlopt-dev \
   libnlopt-cxx-dev \
   ros-humble-xacro \
@@ -69,7 +69,8 @@ RUN sudo apt-get install -y \
   libdwarf-dev \
   libelf-dev \
   libsqlite3-dev \
-  sqlitebrowser
+  sqlitebrowser \
+ && sudo rm -rf /var/lib/apt/lists/*
 
 # Set up sourcing
 COPY --chown=${USERNAME}:${USERNAME} config/rosgsw_entrypoint.sh ${CODE_DIR}/entrypoint.sh
@@ -86,7 +87,7 @@ WORKDIR ${CODE_DIR}/brash
 FROM rosgsw-dev AS rosfsw-dev
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN sudo apt-get install -y \
+RUN sudo apt-get update && sudo apt-get install -y \
   ros-humble-controller-interface \
   ros-humble-realtime-tools \
   ros-humble-control-toolbox \
@@ -105,7 +106,8 @@ RUN sudo apt-get install -y \
   ros-humble-ign-ros2-control \
   ros-humble-joint-state-broadcaster \
   ros-humble-diff-drive-controller \
-  ros-humble-clearpath-gz
+  ros-humble-clearpath-gz \
+ && sudo rm -rf /var/lib/apt/lists/*
 
 # Build a rover_ws into container
 WORKDIR ${CODE_DIR}
