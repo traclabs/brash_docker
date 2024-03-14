@@ -2,7 +2,7 @@ version: "3.8"
 services:
   # NOTE: exposed ports are for debug purposes only. Volume mounts are for both debug and logging. 
   fsw:
-    image: "cfs"
+    image: "ghcr.io/traclabs/brash_docker:cfs"
     command: "./core-cpu2"
     environment:
       - DISPLAY=novnc:0.0
@@ -16,7 +16,7 @@ services:
       args:
         - USER_UID=${UID:-1000}
   rosgsw:
-    image: "rosgsw"
+    image: "ghcr.io/traclabs/brash_docker:rosgsw"
     command: "./run_rosgsw.sh"
     env_file:
       - env.sh
@@ -33,7 +33,7 @@ services:
       args:
         - USER_UID=${UID:-1000}
   rosfsw:
-    image: "rosfsw"
+    image: "ghcr.io/traclabs/brash_docker:rosfsw"
     command: "./run_rosfsw.sh"
     env_file:
       - env.sh
