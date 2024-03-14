@@ -1,4 +1,4 @@
-name: Building production images
+name: Building production images (we are still testing these, so use at your own risk)
 
 on:
   workflow_dispatch:
@@ -50,50 +50,32 @@ jobs:
         with:
           images: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}   
       
-      # This repository is checked out! It needs to pull recursively
-      - name: Clone brash_docker and submodules (cFS, brash and juicer)
-        run: |
-          git submodule update --init --recursive                    
+      # This repository is checked out! No need to pull recursively, we are just building the spaceros image
+      #- name: Clone brash_docker and submodules (cFS, brash and juicer)
+      #  run: |
+      #    git submodule update --init --recursive                    
           
       # Clone brash workspace repositories
-      - name: Clone brash workspace repositories
-        run: |
-          cd brash
-          pip3 install vcstool
-          mkdir src
-          vcs import src < https.repos
+      #- name: Clone brash workspace repositories
+      #  run: |
+      #    cd brash
+      #    pip3 install vcstool
+      #    mkdir src
+      #    vcs import src < https.repos
           
       # Call docker compose build with UID explicit
       - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          source scripts/build_images.sh -c docker-compose-prod.yml
-          echo "Built base images, return 0 if good, 1 if failure: $?"
+          docker build -f brash_spaceros.Dockerfile . -t spaceros_demos
       
-      # Push cfs image
+      # Push spaceros demo image
       # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push cfs
+      - name: Push spaceros_demos
         run: |
-          local_tag="cfs"
+          local_tag="spaceros_demos"
           remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
           docker tag $local_tag $remote_tag
           docker push $remote_tag
       
-      # Push rosgsw image
-      # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push rosgsw
-        run: |
-          local_tag="rosgsw"
-          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
-          docker tag $local_tag $remote_tag
-          docker push $remote_tag
-
-      # Push rosfsw image
-      # (not using build-and-push action as passing images is giving me trouble)
-      - name: Push rosfsw
-        run: |
-          local_tag="rosfsw"
-          remote_tag="${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${local_tag}"
-          docker tag $local_tag $remote_tag
-          docker push $remote_tag
       
