@@ -1,5 +1,4 @@
-name: Building production images (we are still testing these, so use at your own risk)
-
+name: Building spaceros image
 on:
   workflow_dispatch:
    # Push
@@ -63,8 +62,8 @@ jobs:
       #    mkdir src
       #    vcs import src < https.repos
           
-      # Call docker compose build with UID explicit
-      - name: Call docker compose build with UID explicit
+      # Call docker  build 
+      - name: Call docker  build
         run: |
           shopt -s expand_aliases        
           docker build -f brash_spaceros.Dockerfile . -t spaceros_demos
