@@ -22,7 +22,9 @@ services:
       dockerfile: brash.Dockerfile
       target: rosgsw-dev
     volumes:
+      - "./cFS:/code/cFS"
       - "./brash:/code/brash"
+      - "./juicer:/code/juicer"
     working_dir: /code/brash
   rosfsw:
     extends:
