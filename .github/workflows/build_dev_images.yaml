@@ -1,4 +1,4 @@
-name: Create cfs-dev, rosgsw-dev and rosfsw-dev docker images
+name: Building development images
 
 on:
   workflow_dispatch:

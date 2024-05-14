@@ -17,7 +17,7 @@ jobs:
 
   build_brash:
   
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -67,7 +67,7 @@ jobs:
       - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          source scripts/build_images.sh -c docker-compose-prod.yml
+          ./scripts/build_images.sh -c docker-compose-prod.yml
           echo "Built base images, return 0 if good, 1 if failure: $?"
       
       # Push cfs image
