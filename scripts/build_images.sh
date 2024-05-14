@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
 
 echo ""
 echo "##### Building base images #####"
@@ -16,13 +16,19 @@ echo "...Using COMPOSE_FILE: ${COMPOSE_FILE}..."
 echo ""
 echo "##### Building fsw, rosgsw and rosfsw #####"
 echo ""
-env UID=${UID} docker compose -f ${COMPOSE_FILE} build
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "!! Failed in building base image for fsw, rosgsw and rosfsw services !!"
-  return 1  
-fi
 
-echo ""
-echo "##### Done! #####"
+build_images_code() {
 
+  env UID=${UID} docker compose -f ${COMPOSE_FILE} build
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    echo "!! Failed in building base image for fsw, rosgsw and rosfsw services !!"
+    return 1  
+  fi
+
+  echo ""
+  echo "##### Done! #####"
+  return 0
+}
+
+build_images_code
