@@ -1,4 +1,4 @@
-FROM ubuntu AS cfs-dev
+FROM ubuntu:jammy AS cfs-dev
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install -y build-essential gdb nano cmake git pkg-config sudo && rm -rf /var/lib/apt/lists/*
