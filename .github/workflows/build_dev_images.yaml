@@ -17,7 +17,7 @@ jobs:
 
   build_brash_noetic:
   
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -67,14 +67,14 @@ jobs:
       - name: Call docker compose build with UID explicit
         run: |
           shopt -s expand_aliases        
-          source scripts/build_images.sh
+          ./scripts/build_images.sh
           echo "Built base images, return 0 if good, 1 if failure: $?"
                     
       # Build cfs workspace
       - name: Build cfs workspace
         run: |
           shopt -s expand_aliases
-          source scripts/build_cfe.sh
+          ./scripts/build_cfe.sh
           echo "Build fsw, should return 0 if good, 1 if failure: $?"
           
           
@@ -82,7 +82,7 @@ jobs:
       - name: Build brash workspace
         run: |
           shopt -s expand_aliases
-          source scripts/build_brash.sh
+          ./scripts/build_brash.sh
           echo "Build rosgsw should return 0 if good, 1 if failure: $?"
       
       # Push cfs-dev image
