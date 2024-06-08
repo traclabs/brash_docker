@@ -6,6 +6,11 @@ services:
     command: "./core-cpu2"
     environment:
       - DISPLAY=novnc:0.0
+    # Enable 123 forwarding to access/test the cFE NTP server from outside docker
+#    ports:
+#      - "123:123/udp"
+    sysctls:
+      - fs.mqueue.msg_max=64
     networks:
       spaceip:
         ipv4_address: 10.5.0.3
