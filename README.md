@@ -12,12 +12,12 @@ Build container
    
    ```
    cd ~/
-   git clone -b feature/jaxa_bridge git@github.com:traclabs/brash_docker
+   git clone -b feature/jaxa_bridge git@github.com:traclabs/brash_docker jaxa_testing
    ```
 2. Build base image, then clone repos and build cfs & ros workspace:
 
    ```
-   cd brash_docker
+   cd jaxa_testing
    ./scripts/build_images.sh
    ./scripts/clone_libraries.sh
    ./scripts/build_cfs.sh
@@ -32,28 +32,28 @@ These instructions are similar to these: https://github.com/jaxa/racs2_bridge/tr
 1. First of all, start spinning the services so the docker container starts:
 
    ```
-   # In brash_docker
+   # In jaxa_testing
    docker compose -f docker-compose-dev.yml up
    ```
 2. In another terminal, open a terminal into the container and start the bridge node (ROS2):
 
    ```
-   docker exec -it brash_docker-rosws-1 bash
+   docker exec -it jaxa_testing-rosws-1 bash
    source install/setup.bash
    ros2 run bridge_py_s bridge_py_s_node  --ros-args --params-file ./src/bridge_py_s/config/params.yaml
    ```
 3. Start the ROS2 nodes:
 
    ```
-   docker exec -it brash_docker-rosws-1 bash
+   docker exec -it jaxa_testing-rosws-1 bash
    source install/setup.bash
    ros2 run  subscriber_c2s  subscriber_c2s_node
    ```
 4. Start the cFS applications:
 
    ```
-   docker exec -it brash_docker-rosws-1 bash
-   cd /root/cfs
+   docker exec -it jaxa_testing-rosws-1 bash
+   cd /root/code/cfs
    cd build/exe/cpu1
    ./core-cpu1
    ```
