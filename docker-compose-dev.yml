@@ -1,47 +1,42 @@
 services:
-  fsw:
-    extends:
-      file: docker-compose-prod.yml
-      service: fsw
-    image: "cfs-dev"
+
+  rosws:
+    image: "jaxa-testing"
+    environment:
+      - ROS_DOMAIN_ID=2
+      - DISPLAY=novnc:0.0      
+    command: bash -c "sleep infinity"
+#    env_file:
+#      - env.sh
+    networks:
+      spaceip:
+        ipv4_address: 10.5.0.2          
     build:
       context: .
-      dockerfile: cfs.Dockerfile
-      target: "cfs-dev"
+      dockerfile: jaxa_jammy_testing.Dockerfile
+      target: jaxa-testing
+      args:
+        - USER_UID=${UID:-1000}      
     volumes:
-      - "./cFS:/code/cFS"
-    working_dir: /code/cFS/build/exe/cpu2
-  rosgsw:
-    extends:
-      file: docker-compose-prod.yml
-      service: rosgsw
-    image: "rosgsw-dev"
-    build:
-      # NOTE: Actual build process must be executed discretely for dev mounts
-      context: .
-      dockerfile: brash.Dockerfile
-      target: rosgsw-dev
-    volumes:
-      - "./cFS:/code/cFS"
-      - "./brash:/code/brash"
-      - "./juicer:/code/juicer"
-    working_dir: /code/brash
-  rosfsw:
-    extends:
-      file: docker-compose-prod.yml
-      service: rosfsw
-    image: "rosfsw-dev"
-    build:
-      context: .
-      dockerfile: brash.Dockerfile
-      target: rosfsw-dev
-    volumes:
-      - "./brash:/code/brash"
-    working_dir: /code/brash
+      - "./rosws:/root/code/rosws"
+      - "./cfs:/root/code/cfs"
+      - "./racs2_bridge:/root/code/racs2_bridge"
+      
+    working_dir: /root/code/rosws
+    
   novnc:
-    extends:
-      file: docker-compose-prod.yml
-      service: novnc
+    image: theasp/novnc:latest
+    environment:
+      # Adjust to your screen size
+      - DISPLAY_WIDTH=1920
+      - DISPLAY_HEIGHT=1080
+      - RUN_XTERM=no
+    ports:
+      - "8080:8080"
+    networks:
+      spaceip:
+        ipv4_address: 10.5.0.5
+        
 
 # NOTE: networks apparently can't be imported from related file?
 networks:
@@ -53,4 +48,5 @@ networks:
          gateway: 10.5.0.1
 
       
+        
       

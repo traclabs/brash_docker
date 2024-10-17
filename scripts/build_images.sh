@@ -22,7 +22,7 @@ build_images_code() {
   env UID=${UID} docker compose -f ${COMPOSE_FILE} build
   ret=$?
   if [ $ret -ne 0 ]; then
-    echo "!! Failed in building base image for fsw, rosgsw and rosfsw services !!"
+    echo "!! Failed in building base image for rosws services !!"
     return 1  
   fi
 

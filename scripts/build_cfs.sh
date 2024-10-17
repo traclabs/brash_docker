@@ -4,25 +4,26 @@ echo ""
 echo "##### Building cfe #####"
 echo ""
 COMPOSE_FILE="docker-compose-dev.yml"
-CODE_DIR="/code"
+CODE_DIR="/root/code"
+SERVICE=rosws
 
-build_cfe_code() {
+build_cfs_code() {
 
-  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make SIMULATION=native prep
+  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cfs $SERVICE make SIMULATION=native prep
   ret=$?
   if [ $ret -ne 0 ]; then
     echo "!! Failed in make SIMULATION step !!"
     return 1  
   fi
 
-  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make
+  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cfs $SERVICE make
   ret=$? 
   if [ $ret -ne 0 ]; then
     echo "!! Failed in make step !!"
     return 1
   fi
 
-  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cFS fsw make install
+  docker compose -f ${COMPOSE_FILE} run -w ${CODE_DIR}/cfs $SERVICE make install
   ret=$?
   if [ $ret -ne 0 ]; then
     echo "!! Failed in make install step !!"
@@ -34,4 +35,6 @@ build_cfe_code() {
   return 0
 }
 
-build_cfe_code
+build_cfs_code
+
+
